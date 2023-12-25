@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnDestroy } from "@angular/core";
+import { Inject, Injectable, OnDestroy, Optional } from "@angular/core";
 import {
   ActivatedRouteSnapshot,
   Route,
@@ -10,6 +10,10 @@ import { first, map, takeUntil, tap } from "rxjs/operators";
 import { AUTH_SERVICE } from "../constants";
 import { AuthServiceInterface, SignInResultInterface } from "../types";
 import { tokenCan, tokenCanAny } from "../core/helpers";
+import { DOCUMENT } from "@angular/common";
+import { useAuthenticationResult } from "./helpers";
+import { REDIRECT_URL } from "../providers";
+// import { Location } from "@angular/common";
 
 @Injectable({
   providedIn: "root",
@@ -18,11 +22,17 @@ export class AuthGuardService implements OnDestroy {
   // tslint:disable-next-line: variable-name
   private _destroy$ = new Subject<void>();
   private _signedIn = false;
+  private window!: Window | null;
 
   constructor(
     @Inject(AUTH_SERVICE) private auth: AuthServiceInterface,
-    private router: Router
+    @Inject(DOCUMENT) document: Document,
+    private router: Router,
+    // private location: Location,
+    @Optional() @Inject(REDIRECT_URL) private redirectTo: string = "/login"
   ) {
+    const { defaultView } = document;
+    this.window = defaultView ?? window;
     this.auth.signInState$
       .pipe(
         takeUntil(this._destroy$),
@@ -49,12 +59,13 @@ export class AuthGuardService implements OnDestroy {
     // Simulating a timeout for signin result to be available
     return interval(300).pipe(
       first(),
-      map(() => {
-        if (!this._signedIn) {
-          return this.router.createUrlTree(["/login"]);
-        }
-        return this._signedIn;
-      })
+      map(() =>
+        useAuthenticationResult(this._signedIn, this.redirectTo)(
+          this.router,
+          // this.location,
+          this.window ?? window
+        )
+      )
     );
   }
 

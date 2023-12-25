@@ -37,7 +37,7 @@ export interface AuthServiceInterface {
   /**
    * @description Signin operation result state
    */
-  signInState$: Observable<SignInResultInterface | undefined>;
+  signInState$: Observable<SignInResultInterface | undefined | null>;
 
   /**
    * A method used to sign in a user with a specific `Strategy`.

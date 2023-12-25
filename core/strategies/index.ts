@@ -4,4 +4,4 @@ export {
   AUTH_CLIENT_CONFIG,
   AuthClientConfig,
   AuthClientInterceptor
-} from "./local";
+} from './local';
