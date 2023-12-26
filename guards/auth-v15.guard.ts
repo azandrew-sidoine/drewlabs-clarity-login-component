@@ -9,6 +9,9 @@ import {
 } from "@angular/router";
 import { map, mergeMap, timer } from "rxjs";
 import { AUTH_SERVICE } from "../constants";
+import { REDIRECT_URL } from "../providers";
+import { DOCUMENT } from "@angular/common";
+import { useAuthenticationResult } from "./helpers";
 
 /**
  * @internal
@@ -51,13 +54,21 @@ export const canActivate: CanActivateFn = (
   state: RouterStateSnapshot
 ) => {
   const router = inject(Router);
+  // const location = inject(Location);
+  const { defaultView } = inject(DOCUMENT);
   const auth = inject(AUTH_SERVICE);
+  const redirectTo = inject(REDIRECT_URL);
+
   return timer(300).pipe(
     mergeMap(() =>
       auth.signInState$.pipe(
         map((state) => (state?.authToken ? true : false)),
         map((signedIn) =>
-          signedIn ? signedIn : router.createUrlTree(["/login"])
+          useAuthenticationResult(signedIn, redirectTo)(
+            router,
+            // location,
+            defaultView ?? window
+          )
         )
       )
     )
@@ -72,13 +83,21 @@ export function canActivateChild(
   state: RouterStateSnapshot
 ) {
   const router = inject(Router);
+  // const location = inject(Location);
+  const { defaultView } = inject(DOCUMENT);
   const auth = inject(AUTH_SERVICE);
+  const redirectTo = inject(REDIRECT_URL);
+
   return timer(300).pipe(
     mergeMap(() =>
       auth.signInState$.pipe(
         map((state) => (state?.authToken ? true : false)),
         map((signedIn) =>
-          signedIn ? signedIn : router.createUrlTree(["/login"])
+          useAuthenticationResult(signedIn, redirectTo)(
+            router,
+            // location,
+            defaultView ?? window
+          )
         )
       )
     )
@@ -94,7 +113,11 @@ export function tokenCanAnyActivate(
   state: RouterStateSnapshot
 ) {
   const router = inject(Router);
+  // const location = inject(Location);
+  const { defaultView } = inject(DOCUMENT);
   const auth = inject(AUTH_SERVICE);
+  const redirectTo = inject(REDIRECT_URL);
+
   return timer(300).pipe(
     mergeMap(() =>
       auth.signInState$.pipe(
@@ -105,7 +128,13 @@ export function tokenCanAnyActivate(
             : [];
           return matchAny(scopes, _scopes);
         }),
-        map((result) => (result ? result : router.createUrlTree(["/login"])))
+        map((result) =>
+          useAuthenticationResult(result, redirectTo)(
+            router,
+            // location,
+            defaultView ?? window
+          )
+        )
       )
     )
   );
@@ -120,7 +149,11 @@ export function tokenCanActivate(
   state: RouterStateSnapshot
 ) {
   const router = inject(Router);
+  // const location = inject(Location);
+  const { defaultView } = inject(DOCUMENT);
   const auth = inject(AUTH_SERVICE);
+  const redirectTo = inject(REDIRECT_URL);
+
   return timer(300).pipe(
     mergeMap(() =>
       auth.signInState$.pipe(
@@ -131,7 +164,13 @@ export function tokenCanActivate(
             : [];
           return match(scopes, _scopes);
         }),
-        map((result) => (result ? result : router.createUrlTree(["/login"])))
+        map((result) =>
+          useAuthenticationResult(result, redirectTo)(
+            router,
+            // location,
+            defaultView ?? window
+          )
+        )
       )
     )
   );
@@ -143,7 +182,11 @@ export function tokenCanActivate(
  */
 export function tokenCanAnyMatch(route: Route, segments: UrlSegment[]) {
   const router = inject(Router);
+  // const location = inject(Location);
+  const { defaultView } = inject(DOCUMENT);
   const auth = inject(AUTH_SERVICE);
+  const redirectTo = inject(REDIRECT_URL);
+
   return timer(300).pipe(
     mergeMap(() =>
       auth.signInState$.pipe(
@@ -152,9 +195,19 @@ export function tokenCanAnyMatch(route: Route, segments: UrlSegment[]) {
           const _scopes = route?.data
             ? route?.data["authorizations"] ?? route?.data["scopes"]
             : [];
-          return authToken && matchAny(scopes ?? [], _scopes);
+          return (
+            typeof authToken !== "undefined" &&
+            authToken !== null &&
+            matchAny(scopes ?? [], _scopes)
+          );
         }),
-        map((result) => (result ? result : router.createUrlTree(["/login"])))
+        map((result) =>
+          useAuthenticationResult(result, redirectTo)(
+            router,
+            // location,
+            defaultView ?? window
+          )
+        )
       )
     )
   );
@@ -166,7 +219,11 @@ export function tokenCanAnyMatch(route: Route, segments: UrlSegment[]) {
  */
 export function tokenCanMatch(route: Route, segments: UrlSegment[]) {
   const router = inject(Router);
+  // const location = inject(Location);
+  const { defaultView } = inject(DOCUMENT);
   const auth = inject(AUTH_SERVICE);
+  const redirectTo = inject(REDIRECT_URL);
+
   return timer(300).pipe(
     mergeMap(() =>
       auth.signInState$.pipe(
@@ -175,9 +232,19 @@ export function tokenCanMatch(route: Route, segments: UrlSegment[]) {
           const _scopes = route?.data
             ? route?.data["authorizations"] ?? route?.data["scopes"]
             : [];
-          return authToken && match(scopes ?? [], _scopes);
+          return (
+            typeof authToken !== "undefined" &&
+            authToken !== null &&
+            match(scopes ?? [], _scopes)
+          );
         }),
-        map((result) => (result ? result : router.createUrlTree(["/login"])))
+        map((result) =>
+          useAuthenticationResult(result, redirectTo)(
+            router,
+            // location,
+            defaultView ?? window
+          )
+        )
       )
     )
   );

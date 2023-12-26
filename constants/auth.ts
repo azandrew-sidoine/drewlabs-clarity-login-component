@@ -1,5 +1,9 @@
 import { InjectionToken } from "@angular/core";
-import { AuthActionHandlers, AuthServiceConfig, AuthServiceInterface } from "../types";
+import {
+  AuthActionHandlers,
+  AuthServiceConfig,
+  AuthServiceInterface,
+} from "../types";
 
 export const ERR_LOGIN_STRATEGY_NOT_FOUND = "AUTH STRATEGY NOT FOUND";
 export const ERR_NOT_LOGGED_IN = "NOT LOGGED IN";
@@ -8,10 +12,16 @@ export const ERR_NOT_INITIALIZED =
 export const ERR_NOT_SUPPORTED_FOR_REFRESH_TOKEN =
   "CHOOSEN PROVIDER DOES NOT SUPPORT REFRESHING TOKEN";
 
+/**
+ * @var auth service config instance injection token
+ */
 export const AUTH_SERVICE_CONFIG = new InjectionToken<AuthServiceConfig>(
   "AuthServiceConfig instance injection token"
 );
 
+/**
+ * @var auth service instance injection token
+ */
 export const AUTH_SERVICE = new InjectionToken<AuthServiceInterface>(
   "AuthServiceInterface instance injection token"
 ); //
@@ -20,6 +30,9 @@ export const AUTH_ACTION_HANDLERS = new InjectionToken<AuthActionHandlers>(
   "AuthResultHandlers instance injection token"
 );
 
+/**
+ * auth action enumeration
+ */
 export enum AuthActions {
   ONGOING = 0,
   COMPLETE = 1,

@@ -51,7 +51,12 @@ export class LocalStrategy implements StrategyInterface {
     private http: RequestClient,
     private host: string,
     private cache?: Storage,
-    endpoints?: Partial<RESTInterfaceType>
+    endpoints?: Partial<RESTInterfaceType>,
+    private driver: string = "default",
+    private authResultCallback?: (
+      result: Partial<SignInResultInterface>
+    ) => boolean,
+    private userResultCallback?: (result: UserInterface) => void
   ) {
     this.endpoints = { ...DEFAULT_ENDPOINTS, ...(endpoints ?? {}) };
   }
@@ -79,8 +84,13 @@ export class LocalStrategy implements StrategyInterface {
   }
 
   signIn(options?: SignInOptionsType) {
+    const _options = options ?? {};
+    // Added driver parameter to the authentication options
     return this.http
-      .post(`${host(this.host)}/${this.endpoints.signIn}`, options)
+      .post(`${host(this.host)}/${this.endpoints.signIn}`, {
+        ..._options,
+        driver: this.driver,
+      })
       .pipe(
         mergeMap((state: SignInResult) => {
           let authState: SignInResult =
@@ -100,6 +110,20 @@ export class LocalStrategy implements StrategyInterface {
           ) {
             return of(false);
           }
+
+          // Case the auth result callback is provided, we it on the auth result state
+          // and case the `authResultCallback` returns false, we drop from the execution context
+          if (this.authResultCallback) {
+            const result = this.authResultCallback.bind(this)(
+              state as Partial<SignInResultInterface>
+            );
+
+            // Case the callback return false, we drop from the execution context
+            if (result === false) {
+              return of(false);
+            }
+          }
+
           return this.http
             .get(`${host(this.host)}/${this.endpoints.users}`, {
               headers: {
@@ -110,6 +134,12 @@ export class LocalStrategy implements StrategyInterface {
             })
             .pipe(
               map((user: UserInterface) => {
+                // Case strategy user provides a user result callback, we invoke 
+                // the user result callback with the resolved user
+                if (this.userResultCallback) {
+                  this.userResultCallback.bind(this)(user);
+                }
+
                 if (state) {
                   const result = {
                     ...(state as SignInResultInterface),

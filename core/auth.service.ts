@@ -1,5 +1,6 @@
 import { Inject, Injectable, OnDestroy, Optional } from "@angular/core";
 import {
+  BehaviorSubject,
   forkJoin,
   from,
   isObservable,
@@ -46,9 +47,7 @@ export class AuthService
 
   private _signInResult!: SignInResultInterface | undefined;
 
-  private _signInState$ = new ReplaySubject<SignInResultInterface | undefined>(
-    1
-  );
+  private _signInState$ = new BehaviorSubject<SignInResultInterface | undefined|null>(null);
   /** An `Observable` that one can subscribe to get the current logged in user information */
   public signInState$ = this._signInState$.asObservable();
 

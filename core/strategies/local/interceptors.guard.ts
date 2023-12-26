@@ -10,9 +10,7 @@ import { AuthClientConfig } from "./types";
 @Injectable({
   providedIn: "root",
 })
-export class AuthClientInterceptor
-  implements HttpInterceptor, OnDestroy
-{
+export class AuthClientInterceptor implements HttpInterceptor {
   constructor(
     @Optional()
     @Inject(AUTH_CLIENT_CONFIG)
@@ -30,6 +28,4 @@ export class AuthClientInterceptor
     // Retrourner la prochaine exécution de la pile des middlewares
     return next.handle(req);
   }
-
-  ngOnDestroy() {}
 }
