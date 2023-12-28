@@ -34,7 +34,7 @@ export class LoginViewComponent {
       undefined,
       Validators.compose([
         Validators.required,
-        Validators.pattern(/((?=[a-zA-Z]*)(?=d*)(?=[~!@#$%^&*()/-_]*).{6,})/),
+        Validators.pattern(/((?=[a-zA-Z]*)(?=d*)(?=[~!@#$%^&*()/-_]*).{4,})/),
       ])
     ),
   });

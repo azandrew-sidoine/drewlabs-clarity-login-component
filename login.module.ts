@@ -74,16 +74,16 @@ export class LoginModule {
           }),
         deps: [Injector],
       },
-      // {
-      //   provide: HTTP_INTERCEPTORS,
-      //   useClass: AuthClientInterceptor,
-      //   multi: true,
-      // },
-      // {
-      //   provide: HTTP_INTERCEPTORS,
-      //   useClass: AuthInterceptor,
-      //   multi: true,
-      // },
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: AuthClientInterceptor,
+        multi: true,
+      },
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: AuthInterceptor,
+        multi: true,
+      },
     ];
 
     // Provide common strings for UI component if strings provider
