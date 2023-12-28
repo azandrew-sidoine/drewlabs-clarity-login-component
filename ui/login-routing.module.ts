@@ -12,7 +12,7 @@ const LOGIN_ROUTES: Routes = [
   {
     path: "callback",
     component: TokenCallbackComponent,
-  },
+  }
 ];
 
 @NgModule({
