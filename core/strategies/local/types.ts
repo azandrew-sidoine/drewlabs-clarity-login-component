@@ -2,39 +2,7 @@
 
 import { SignInResultInterface } from "../../../types";
 
-/**
- * Type declaration for token user query result
- *
- * @internal
- */
-export type UserInterface = {
-  id: number | string;
-  username: string;
-  user_details: {
-    firstname: string;
-    lastname: string;
-    address?: string;
-    phone_number?: string;
-    profile_url?: string;
-    emails: string[];
-  };
-  double_auth_active: boolean;
-  authorizations: string[];
-  roles: string[];
-};
-
-/**
- * REST interface type enpoints type declarations
- *
- * @internal
- */
-export type RESTInterfaceType = {
-  users: string;
-  signIn: string;
-  signOut: string;
-};
-
-export type SingInResultType = SignInResultInterface | undefined;
+export type SingInResultType = SignInResultInterface | null;
 
 /**
  * Auth clients configuration type declarations
@@ -44,4 +12,10 @@ export type AuthClientConfig = {
   secret: string;
 };
 
+/**
+ * Auth result callback type declaration
+ */
+export type AuthResultCallbackType = (
+  result: Partial<SignInResultInterface>
+) => boolean;
 //#endregion Types

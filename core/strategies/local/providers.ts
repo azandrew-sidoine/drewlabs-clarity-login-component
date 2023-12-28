@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
-import { RESTInterfaceType, UserInterface } from "./types";
 import { LocalStrategy } from "./strategy";
 import { SignInResultInterface } from "../../../types";
+import { RESTInterfaceType, UserInterface, createAuthProvider } from "./auth";
 
 type ProvideLocalStorageType = {
   client: HttpClient;
@@ -26,13 +26,22 @@ export function useLocalStrategy(param: ProvideLocalStorageType) {
     authResultCallback,
     userResultCallback,
   } = param;
+
+  // Creates the auth provider instance
+  const authProvider = createAuthProvider(client, endpoints, host);
+
+  // Resolve the local strategy instance
   return new LocalStrategy(
-    client,
-    host,
+    authProvider,
+    authProvider,
     storage,
-    endpoints,
     driver ?? "default",
     authResultCallback,
     userResultCallback
   );
+}
+
+
+export function useAuthTokenStrategy() {
+  
 }
