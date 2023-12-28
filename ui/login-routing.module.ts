@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { LoginComponent } from "./login.component";
 import { LoginViewComponent } from "./login-view.component";
-import { TokenCallbackComponent } from "./token-callback";
+import { AuthCallbackComponent } from "./auth-callback";
 
 const LOGIN_ROUTES: Routes = [
   {
@@ -11,7 +11,7 @@ const LOGIN_ROUTES: Routes = [
   },
   {
     path: "callback",
-    component: TokenCallbackComponent,
+    component: AuthCallbackComponent,
   },
 ];
 

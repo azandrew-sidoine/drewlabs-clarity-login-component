@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { ClarityModule } from "@clr/angular";
+import { AUTH_CALLBACK_PIPES } from "./auth-callback";
 
 @NgModule({
   imports: [
@@ -19,7 +20,7 @@ import { ClarityModule } from "@clr/angular";
     ClarityModule,
     CommonStringsModule,
   ],
-
-  declarations: [...LOGIN_NAVIGATION_COMPONENTS],
+  declarations: [...LOGIN_NAVIGATION_COMPONENTS, ...AUTH_CALLBACK_PIPES],
+  exports: [...AUTH_CALLBACK_PIPES],
 })
 export class LoginModule {}
