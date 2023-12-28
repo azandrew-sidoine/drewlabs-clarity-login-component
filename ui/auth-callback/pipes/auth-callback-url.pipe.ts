@@ -20,7 +20,12 @@ export class AuthCallbackUrlPipe implements PipeTransform {
           typeof state?.authToken !== "undefined" && state.authToken !== null
       ),
       map((state) => state as SignInResultInterface),
-      map(({ authToken }) => `${url}/auth/callback?token=${authToken ?? ""}`)
+      map(({ authToken }) => {
+        if (url.endsWith("/")) {
+          url = url.substring(0, url.length - 1);
+        }
+        return `${url}/auth/callback?token=${authToken ?? ""}`;
+      })
     );
   }
 }
