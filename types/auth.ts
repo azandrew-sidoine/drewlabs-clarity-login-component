@@ -58,4 +58,10 @@ export interface AuthServiceInterface {
    * @returns A `Promise` that resolves if the operation is successful, rejects otherwise
    */
   signOut(revoke?: boolean): Observable<boolean> | Observable<any>;
+
+  /**
+   * Refresh auth sign in state object
+   *
+   */
+  refreshSignInState(authToken: string, provider?: string): Observable<boolean>;
 }

@@ -47,7 +47,9 @@ export class AuthService
 
   private _signInResult!: SignInResultInterface | undefined;
 
-  private _signInState$ = new BehaviorSubject<SignInResultInterface | undefined|null>(null);
+  private _signInState$ = new BehaviorSubject<
+    SignInResultInterface | undefined | null
+  >(null);
   /** An `Observable` that one can subscribe to get the current logged in user information */
   public signInState$ = this._signInState$.asObservable();
 
@@ -166,6 +168,18 @@ export class AuthService
         return throwError(() => err);
       })
     );
+  }
+
+  refreshSignInState(authToken: string, provider?: string) {
+    const _provider = (this._signInResult?.provider ?? provider) as string;
+    if (typeof _provider !== "string") {
+      return throwError(() => new Error(ERR_LOGIN_STRATEGY_NOT_FOUND));
+    }
+    const strategy = this.strategies.get(_provider.toUpperCase());
+    if (typeof strategy === "undefined" || strategy === null) {
+      return throwError(() => new Error(ERR_LOGIN_STRATEGY_NOT_FOUND));
+    }
+    return strategy.refreshSignInState(authToken);
   }
 
   /**

@@ -2,16 +2,16 @@ import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { finalize, map, mergeMap } from "rxjs/operators";
 import {
   DoubleAuthSignInResultInterface,
-  RequestClient,
   SignInOptionsType,
   SignInResult,
   SignInResultInterface,
   StrategyInterface,
   UnAuthenticatedResultInterface,
 } from "../../../types";
-import { host } from "../../helpers";
-import { DEFAULT_ENDPOINTS, LOCAL_SIGNIN_RESULT_CACHE } from "./defaults";
-import { RESTInterfaceType, SingInResultType, UserInterface } from "./types";
+import { LOCAL_SIGNIN_RESULT_CACHE } from "./defaults";
+import { AuthResultCallbackType, SingInResultType } from "./types";
+import { UserResolver, SignInRequestHandler, UserInterface } from "./auth";
+import { mergeUserMedata } from "./helpers";
 
 /**
  * Local strategy provides interface for authenticating first party
@@ -40,26 +40,20 @@ import { RESTInterfaceType, SingInResultType, UserInterface } from "./types";
  */
 export class LocalStrategy implements StrategyInterface {
   // Properties definition
-  private endpoints: RESTInterfaceType;
-  private _signInState$ = new BehaviorSubject<SingInResultType>(undefined);
+  private _signInState$ = new BehaviorSubject<SingInResultType>(null);
   signInState$ = this._signInState$.asObservable();
   private _request2FaConsent$ = new Subject<string>();
   request2FaConsent$ = this._request2FaConsent$.asObservable();
 
   // Instance initializer
   constructor(
-    private http: RequestClient,
-    private host: string,
+    private userResolver: UserResolver,
+    private signInHandler: SignInRequestHandler,
     private cache?: Storage,
-    endpoints?: Partial<RESTInterfaceType>,
     private driver: string = "default",
-    private authResultCallback?: (
-      result: Partial<SignInResultInterface>
-    ) => boolean,
+    private authResultCallback?: AuthResultCallbackType,
     private userResultCallback?: (result: UserInterface) => void
-  ) {
-    this.endpoints = { ...DEFAULT_ENDPOINTS, ...(endpoints ?? {}) };
-  }
+  ) {}
 
   initialize(autologin?: boolean): Observable<void> {
     // TODO : If Auto-login is true, load the signIn result from the cache storage
@@ -68,26 +62,47 @@ export class LocalStrategy implements StrategyInterface {
   }
 
   getLoginStatus() {
-    return new Promise<SingInResultType>((resolve, reject) => {
+    return new Promise<SingInResultType>((resolve) => {
       if (this.cache) {
         const value = this.cache.getItem(LOCAL_SIGNIN_RESULT_CACHE) as any;
         if (typeof value === "undefined" || value === null) {
-          return resolve(undefined);
+          return resolve(null);
         }
         if (typeof value === "string") {
           return resolve(JSON.parse(value) as SignInResultInterface);
         }
         return resolve(value);
       }
-      return resolve(undefined);
+      return resolve(null);
     });
+  }
+
+  refreshSignInState(authToken: string) {
+    return this.userResolver.user(authToken).pipe(
+      map((user) => {
+        // Case strategy user provides a user result callback, we invoke
+        // the user result callback with the resolved user
+        if (this.userResultCallback) {
+          this.userResultCallback.bind(this)(user);
+        }
+        const result = mergeUserMedata(
+          { ...user.accessToken, authToken },
+          user
+        );
+        this._signInState$.next(result);
+        if (this.cache) {
+          this.cache.setItem(LOCAL_SIGNIN_RESULT_CACHE, JSON.stringify(result));
+        }
+        return true;
+      })
+    );
   }
 
   signIn(options?: SignInOptionsType) {
     const _options = options ?? {};
     // Added driver parameter to the authentication options
-    return this.http
-      .post(`${host(this.host)}/${this.endpoints.signIn}`, {
+    return this.signInHandler
+      .sendRequest({
         ..._options,
         driver: this.driver,
       })
@@ -111,12 +126,17 @@ export class LocalStrategy implements StrategyInterface {
             return of(false);
           }
 
+          const _state = state as Partial<SignInResultInterface>;
+          const authToken = _state.authToken;
+
+          if (typeof authToken === "undefined" || authToken === null) {
+            return of(false);
+          }
+
           // Case the auth result callback is provided, we it on the auth result state
           // and case the `authResultCallback` returns false, we drop from the execution context
           if (this.authResultCallback) {
-            const result = this.authResultCallback.bind(this)(
-              state as Partial<SignInResultInterface>
-            );
+            const result = this.authResultCallback.bind(this)(_state);
 
             // Case the callback return false, we drop from the execution context
             if (result === false) {
@@ -124,61 +144,39 @@ export class LocalStrategy implements StrategyInterface {
             }
           }
 
-          return this.http
-            .get(`${host(this.host)}/${this.endpoints.users}`, {
-              headers: {
-                Authorization: `Bearer ${
-                  (state as Partial<SignInResultInterface>).authToken
-                }`,
-              },
-            })
-            .pipe(
-              map((user: UserInterface) => {
-                // Case strategy user provides a user result callback, we invoke 
-                // the user result callback with the resolved user
-                if (this.userResultCallback) {
-                  this.userResultCallback.bind(this)(user);
-                }
+          return this.userResolver.user(authToken).pipe(
+            map((user: UserInterface) => {
+              // Case strategy user provides a user result callback, we invoke
+              // the user result callback with the resolved user
+              if (this.userResultCallback) {
+                this.userResultCallback.bind(this)(user);
+              }
 
-                if (state) {
-                  const result = {
-                    ...(state as SignInResultInterface),
-                    id: user.id,
-                    emails: user?.user_details?.emails,
-                    name: user?.username,
-                    photoUrl: user?.user_details?.profile_url,
-                    firstName: user?.user_details?.firstname,
-                    lastName: user?.user_details?.lastname,
-                    phoneNumber: user?.user_details?.phone_number,
-                    address: user?.user_details?.address,
-                  };
-                  this._signInState$.next(result);
-                  if (this.cache) {
-                    this.cache.setItem(
-                      LOCAL_SIGNIN_RESULT_CACHE,
-                      JSON.stringify(result)
-                    );
-                  }
+              if (_state) {
+                const result = mergeUserMedata(_state, user);
+                this._signInState$.next(result);
+                if (this.cache) {
+                  this.cache.setItem(
+                    LOCAL_SIGNIN_RESULT_CACHE,
+                    JSON.stringify(result)
+                  );
                 }
-                return true;
-              })
-            );
+              }
+              return true;
+            })
+          );
         })
       );
   }
 
   signOut(revoke?: boolean): Observable<boolean> {
-    return this.http
-      .get(`${host(this.host)}/${this.endpoints.users}`, {
-        params: { revoke },
+    return this.userResolver.revoke(revoke).pipe(
+      map(() => true),
+      finalize(() => {
+        // Cleanup the resources to prevent user from auto login next time
+        this._signInState$.next(null);
+        this.cache?.removeItem(LOCAL_SIGNIN_RESULT_CACHE);
       })
-      .pipe(
-        map(() => true),
-        finalize(() => {
-          // Cleanup the resources to prevent user from auto login next time
-          this._signInState$.next(undefined);
-          this.cache?.removeItem(LOCAL_SIGNIN_RESULT_CACHE);
-        })
-      );
+    );
   }
 }
