@@ -50,7 +50,6 @@ export class LoginViewComponent {
   @Input() public companyDescription = "Company Description";
   @Input() public appServiceName = environment.appServiceName;
   @Input() logoAssetPath = environment.logoAssetPath;
-  @Input() imgAmuPath = environment.imgAmuPath;
   @Input() hasRememberMe!: boolean;
 
   /**

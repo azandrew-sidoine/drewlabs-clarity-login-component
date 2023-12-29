@@ -18,6 +18,11 @@ import { useAuthenticationResult } from "./helpers";
  */
 function matchAny(scopes: string[], appScopes: string[]) {
   const _scopes = Array.isArray(appScopes) ? appScopes : [appScopes];
+  // Case the list of application scopes is equal to 0, return true
+  if (appScopes.length === 0) {
+    return true;
+  }
+
   let exists = false;
   for (const scope of _scopes) {
     // We break the loop for the first scope that exist
@@ -35,6 +40,11 @@ function matchAny(scopes: string[], appScopes: string[]) {
  */
 function match(scopes: string[], appScopes: string[]) {
   const _scopes = Array.isArray(appScopes) ? appScopes : [appScopes];
+  // Case the list of application scopes is equal to 0, return true
+  if (appScopes.length === 0) {
+    return true;
+  }
+
   let exists = true;
   for (const scope of _scopes) {
     // We check for any missing scope from authorized token scopes
@@ -195,6 +205,7 @@ export function tokenCanAnyMatch(route: Route, segments: UrlSegment[]) {
           const _scopes = route?.data
             ? route?.data["authorizations"] ?? route?.data["scopes"]
             : [];
+          console.log("Match Any: ", matchAny(scopes ?? [], _scopes));
           return (
             typeof authToken !== "undefined" &&
             authToken !== null &&
