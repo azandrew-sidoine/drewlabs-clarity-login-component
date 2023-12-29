@@ -205,7 +205,6 @@ export function tokenCanAnyMatch(route: Route, segments: UrlSegment[]) {
           const _scopes = route?.data
             ? route?.data["authorizations"] ?? route?.data["scopes"]
             : [];
-          console.log("Match Any: ", matchAny(scopes ?? [], _scopes));
           return (
             typeof authToken !== "undefined" &&
             authToken !== null &&
