@@ -1,6 +1,6 @@
-import { AuthCallbackUrlPipe } from "./auth-callback";
 export { LoginComponent } from "./login.component";
 export { LoginModule } from "./login.module";
+export { UserMetadaModule, UserMetadaComponent } from "./components";
 export {
   ProvideCommonStringsType,
   provideCommonStrings,

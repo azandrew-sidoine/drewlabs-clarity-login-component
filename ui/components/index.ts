@@ -1,0 +1,1 @@
+export { UserMetadaModule, UserMetadaComponent } from './user-metadata';
