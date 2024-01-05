@@ -14,7 +14,6 @@ import {
   NgForm,
   Validators,
 } from "@angular/forms";
-import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-login-view",
@@ -35,21 +34,19 @@ export class LoginViewComponent {
       undefined,
       Validators.compose([
         Validators.required,
-        Validators.pattern(/((?=[a-zA-Z]*)(?=d*)(?=[~!@#$%^&*()/-_]*).{6,})/),
+        Validators.pattern(/((?=[a-zA-Z]*)(?=d*)(?=[~!@#$%^&*()/-_]*).{4,})/),
       ])
     ),
   });
 
-  // tslint:disablcompanyNamee-next-line: no-inferrable-types
+  // tslint:disable-next-line: no-inferrable-types
   @Input() performingAction: boolean = false;
   // tslint:disable-next-line: no-inferrable-types
   @Input() loggedIn: boolean = false;
   @ViewChild("loginForm") loginForm!: NgForm;
   @Input() public moduleName = "App Name";
   @Input() public companyName = "Company Name";
-  @Input() public companyDescription = "Company Description";
-  @Input() public appServiceName = environment.appServiceName;
-  @Input() logoAssetPath = environment.logoAssetPath;
+  @Input() logoAssetPath = "...";
   @Input() hasRememberMe!: boolean;
 
   /**
