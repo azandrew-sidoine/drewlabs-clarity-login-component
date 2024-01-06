@@ -22,8 +22,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginViewComponent {
+  // #region Component output
   @Output() formSubmitted = new EventEmitter<object>();
-  @Output() loadRegistrationViewEvent = new EventEmitter<boolean>();
+  // #endregion Component output
 
   public formGroup: FormGroup = this.builder.group({
     username: this.builder.control(
@@ -39,13 +40,13 @@ export class LoginViewComponent {
     ),
   });
 
-  // tslint:disable-next-line: no-inferrable-types
-  @Input() performingAction: boolean = false;
-  // tslint:disable-next-line: no-inferrable-types
-  @Input() loggedIn: boolean = false;
   @ViewChild("loginForm") loginForm!: NgForm;
-  @Input() public moduleName = "App Name";
-  @Input() public companyName = "Company Name";
+  @Input() performingAction: boolean = false;
+  @Input() loggedIn: boolean = false;
+  @Input() module = "App Name";
+  @Input() company = "Company Name";
+  @Input() description = "";
+  @Input() service = "";
   @Input() logoAssetPath = "...";
   @Input() hasRememberMe!: boolean;
 
@@ -82,8 +83,4 @@ export class LoginViewComponent {
       control?.markAsPristine({ onlySelf: true });
     }
   }
-
-  onNavigateToRegistrationView = () => {
-    this.loadRegistrationViewEvent.emit(true);
-  };
 }

@@ -20,7 +20,10 @@ import { AuthService } from "../core";
       [performingAction]="(performingAction$ | async) || false"
       (formSubmitted)="handleSubmit($event)"
       (loadRegistrationViewEvent)="router.navigateByUrl('/register')"
-      [moduleName]="moduleName"
+      [module]="moduleName"
+      [company]="companyName"
+      [description]="companyDescription"
+      [service]="appServiceName"
       [logoAssetPath]="logoAssetPath"
     ></app-login-view>
   `,
@@ -35,6 +38,9 @@ export class LoginComponent implements OnDestroy {
 
   // #region Component inputs
   @Input() moduleName!: string;
+  @Input() companyName!: string;
+  @Input() companyDescription!: string;
+  @Input() appServiceName!: string;
   @Input() loginHeadingText!: string;
   @Input() logoAssetPath!: string;
   @Input() hasRememberMe!: string;
@@ -61,10 +67,21 @@ export class LoginComponent implements OnDestroy {
     public readonly injector: Injector
   ) {
     // #region Set Login component properties
-    const { moduleName, loginHeadingText, logoAssetPath, hasRememberMe, path } =
-      this.route.snapshot.data;
+    const {
+      moduleName,
+      loginHeadingText,
+      logoAssetPath,
+      hasRememberMe,
+      path,
+      companyName,
+      companyDescription,
+      appServiceName,
+    } = this.route.snapshot.data;
     this.moduleName = moduleName;
+    this.companyName = companyName;
     this.loginHeadingText = loginHeadingText;
+    this.companyDescription = companyDescription;
+    this.appServiceName = appServiceName;
     this.logoAssetPath = logoAssetPath;
     this.hasRememberMe = hasRememberMe;
     // #endregion  Set Login component properties
