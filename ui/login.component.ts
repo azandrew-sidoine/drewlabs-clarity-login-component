@@ -22,6 +22,8 @@ import { AuthService } from "../core";
       (loadRegistrationViewEvent)="router.navigateByUrl('/register')"
       [moduleName]="moduleName"
       [logoAssetPath]="logoAssetPath"
+      [companyDescription]="companyDescription"
+      [companyName]="companyName"
     ></app-login-view>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +40,8 @@ export class LoginComponent implements OnDestroy {
   @Input() loginHeadingText!: string;
   @Input() logoAssetPath!: string;
   @Input() hasRememberMe!: string;
+  @Input() companyName = "Company Name";
+  @Input() companyDescription!: string;
   // #region Component inputs
 
   performingAction$ = (this.auth as AuthService)?.actionsState$.pipe(
@@ -61,9 +65,18 @@ export class LoginComponent implements OnDestroy {
     public readonly injector: Injector
   ) {
     // #region Set Login component properties
-    const { moduleName, loginHeadingText, logoAssetPath, hasRememberMe, path } =
-      this.route.snapshot.data;
+    const {
+      moduleName,
+      loginHeadingText,
+      logoAssetPath,
+      hasRememberMe,
+      companyName,
+      companyDescription,
+      path,
+    } = this.route.snapshot.data;
     this.moduleName = moduleName;
+    this.companyDescription = companyDescription;
+    this.companyName = companyName;
     this.loginHeadingText = loginHeadingText;
     this.logoAssetPath = logoAssetPath;
     this.hasRememberMe = hasRememberMe;

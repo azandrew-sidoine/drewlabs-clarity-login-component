@@ -1,13 +1,19 @@
 <div class="login-wrapper">
   <div class="login-overlay" *ngIf="formGroup">
     <form class="login clr-form" #loginForm="ngForm" [formGroup]="formGroup" (ngSubmit)="onFormSubmit(formGroup)">
+      <div class="company-infos">
+        <div class="login-logo" *ngIf="logoAssetPath">
+          <img alt="application-logo" [src]="logoAssetPath" [alt]="companyName" />
+          <h3>{{ companyName }}</h3>
+          <!-- TODO: Remove if not required -->
+          <!-- <div class="company-description">{{ companyDescription }}</div> -->
+        </div>
+      </div>
       <div class="login-group">
         <div class="title">
-          <div class="login-logo" *ngIf="logoAssetPath">
-            <img alt="application-logo" [src]="logoAssetPath" [alt]="companyName" />
-          </div>
-          <span class="module-name">{{ moduleName}}</span>
-          <h5 class="hint">{{ 'loginSubText' | commonString}}</h5>
+          <span class="module-name">{{ moduleName }}</span>
+          <!-- TODO: Remove if not required -->
+          <!-- <h5 class="hint">{{ appServiceName }}</h5> -->
         </div>
         <clr-input-container>
           <label class="clr-sr-only">{{ 'username.label' | commonString}}</label>
@@ -25,6 +31,7 @@
         </clr-checkbox-wrapper>
         <button title="sumit-button" type="submit" [disabled]="performingAction" class="btn btn-primary">{{
           'loginBtnText' | commonString}}</button>
+
         <div class="app-login-footer">
           <div class="app-login-logo-description">Powered by LIKSOFT</div>
         </div>
