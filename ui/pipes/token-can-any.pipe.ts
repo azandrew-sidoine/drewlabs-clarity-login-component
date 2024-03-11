@@ -6,7 +6,7 @@ import {
 } from "../../types";
 import { tokenCanAny } from "../../core";
 import { AUTH_SERVICE } from "../../constants";
-import { map } from "rxjs";
+import { map, tap } from "rxjs";
 
 /**
  * Instead of using helper function `[tokenCanAny]` or rxjs operators `[tokenCanAny$]`
