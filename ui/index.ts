@@ -1,6 +1,6 @@
-import { AuthCallbackUrlPipe } from "./auth-callback";
 export { LoginComponent } from "./login.component";
 export { LoginModule } from "./login.module";
+export { CommonDirectivesModule } from "./common.module";
 export { UserMetadaModule, UserMetadaComponent } from "./components";
 export {
   ProvideCommonStringsType,
@@ -15,3 +15,5 @@ export {
   IfHasAnyScopeDirective,
   IfHasScopesDirective,
 } from "./directives";
+
+export { TokenCanAnyPipe, TokenCanPipe } from "./pipes";

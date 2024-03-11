@@ -33,14 +33,6 @@ export class IfAuthenticatedDirective implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Reset directive state
-   */
-  private resetState() {
-    cancelSubscriptions(this._subscriptions ?? []);
-    this._subscriptions = [];
-  }
-
-  /**
    * Update directive view container template
    */
   private updateView() {

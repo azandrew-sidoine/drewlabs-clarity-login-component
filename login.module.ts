@@ -20,14 +20,10 @@ import {
 } from "./core";
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { AuthInterceptor } from "./http";
-import { TokenCanAnyPipe, TokenCanPipe } from "./ui/pipes";
 import { ProvideCommonStringsType, provideCommonStrings } from "./ui";
 import { ProvideAuthServiceConfig } from "./types";
 
-@NgModule({
-  declarations: [TokenCanAnyPipe, TokenCanPipe],
-  exports: [TokenCanAnyPipe, TokenCanPipe],
-})
+@NgModule()
 export class LoginModule {
   static forRoot(config: {
     handleActions: ActionHandlersType;
