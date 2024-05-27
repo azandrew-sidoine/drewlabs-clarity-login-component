@@ -203,7 +203,7 @@ export class AuthService
     const provider = this._signInResult?.provider;
     const strategy = this.strategies.get(provider?.toUpperCase());
     if (typeof strategy === "undefined" || strategy === null) {
-      this.onLoggedOut();
+      this.onLoggedOut(provider, this._signInResult);
       return throwError(() => new Error(ERR_LOGIN_STRATEGY_NOT_FOUND));
     }
     this._actionsState$.next(AuthActions.ONGOING);
@@ -211,12 +211,12 @@ export class AuthService
       tap((state) => {
         this._actionsState$.next(AuthActions.COMPLETE);
         if (state) {
-          this.onLoggedOut();
+          this.onLoggedOut(provider, this._signInResult);
         }
       }),
       catchError((err) => {
         this._actionsState$.next(AuthActions.FAILED);
-        this.onLoggedOut();
+        this.onLoggedOut(provider, this._signInResult);
         return throwError(() => err);
       })
     );
@@ -226,9 +226,9 @@ export class AuthService
     return this.strategies.get(id);
   }
 
-  private onLoggedOut() {
+  private onLoggedOut(provider?: string, result?: SignInResultInterface) {
     this.setSignInState(undefined);
-    this.handlers?.onLogout();
+    this.handlers?.onLogout(provider, result);
   }
 
   private setSignInState(state: SignInResultInterface | undefined) {

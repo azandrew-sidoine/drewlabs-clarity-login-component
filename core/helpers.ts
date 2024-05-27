@@ -100,6 +100,7 @@ export function provideAuthActionHandlersFactory(handlers: ActionHandlersType) {
       success,
       failure: fail,
       error,
+      logout,
       performingAction,
       loginPath,
     } = _handlers;
@@ -112,7 +113,14 @@ export function provideAuthActionHandlersFactory(handlers: ActionHandlersType) {
         ((err?: unknown) => {
           console.error("Authentication request Error: ", err);
         }),
-      onLogout: () => {
+      onLogout: (...args: any[]) => {
+        const _logout = logout ?? (() => {});
+        // Case the logout function return false, as result we prevent view from navigating
+        // to login login path
+        const canLogout = _logout(injector, ...args) !== false;
+        if (!canLogout) {
+          return;
+        }
         timer(300)
           .pipe(first())
           .subscribe(() => router.navigate([loginPath ?? "login"]));

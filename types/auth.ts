@@ -24,7 +24,7 @@ export interface AuthActionHandlers {
   onAuthenticationFailure: () => void;
   onPerformingAction: () => void;
   onError: () => void;
-  onLogout: () => void;
+  onLogout: (provider?: string, signInResult?: SignInResultInterface) => void;
 }
 
 /**
