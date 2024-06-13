@@ -31,7 +31,7 @@ import { ClarityModule } from "@clr/angular";
   ],
   selector: "app-login-view",
   templateUrl: "./login-view.component.html",
-  styleUrls: ["./login-view.component.css"],
+  styleUrls: ["./login-view.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginViewComponent {

@@ -9,5 +9,13 @@ export {
   DoubleAuthSignInResultInterface,
 } from "./types";
 
-// Exported providers
+/** Exported angular providers */
 export { provideRedirectUrl } from "./providers";
+
+/** Exported core components and types */
+export {
+  useLocalStrategy,
+  tokenCan,
+  tokenCanAny,
+  provideAuthActionHandlersFactory,
+} from "./core";
