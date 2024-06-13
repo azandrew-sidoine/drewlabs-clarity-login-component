@@ -19,6 +19,8 @@ import {
 } from "@angular/forms";
 import { COMMON_PIPES } from "@azlabsjs/ngx-common";
 import { ClarityModule } from "@clr/angular";
+import { PasswordToggleComponent } from "./password-toggle";
+import { PasswordInputDirective } from "./password-input.directive";
 
 @Component({
   standalone: true,
@@ -28,6 +30,8 @@ import { ClarityModule } from "@clr/angular";
     FormsModule,
     ReactiveFormsModule,
     ClarityModule,
+    PasswordToggleComponent,
+    PasswordInputDirective,
   ],
   selector: "app-login-view",
   templateUrl: "./login-view.component.html",
@@ -54,14 +58,15 @@ export class LoginViewComponent {
   });
 
   @ViewChild("loginForm") loginForm!: NgForm;
+  @ViewChild(PasswordInputDirective, { static: false })
+  passwordInputRef!: PasswordInputDirective | null;
   @Input() performingAction: boolean = false;
   @Input() loggedIn: boolean = false;
-  @Input() module = "App Name";
-  @Input() company = "Company Name";
-  @Input() description = "";
-  @Input() service = "";
-  @Input() logoAssetPath = "...";
-  @Input() hasRememberMe!: boolean;
+  @Input() name: string | null | undefined;
+  @Input() company: string | null | undefined = "Company Name";
+  @Input() description: string | null | undefined = "";
+  @Input() logo: string | null | undefined = "...";
+  @Input() remember!: boolean;
 
   /**
    * Component object instance initializer

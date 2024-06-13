@@ -5,8 +5,9 @@ import {
   Inject,
   Input,
   Injector,
+  Optional,
 } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { map, tap } from "rxjs/operators";
 import { Subject, firstValueFrom } from "rxjs";
 import { AuthServiceInterface } from "../../types";
@@ -14,6 +15,8 @@ import { AuthActions, AuthStrategies, AUTH_SERVICE } from "../../constants";
 import { AuthService } from "../../core";
 import { LoginViewComponent } from "./login-view.component";
 import { CommonModule } from "@angular/common";
+import { UI_METADATA } from "../providers";
+import { UIMetadata } from "../type";
 
 @Component({
   standalone: true,
@@ -24,11 +27,11 @@ import { CommonModule } from "@angular/common";
       [performingAction]="(performingAction$ | async) || false"
       (formSubmitted)="handleSubmit($event)"
       (loadRegistrationViewEvent)="router.navigateByUrl('/register')"
-      [module]="moduleName"
-      [company]="companyName"
-      [description]="companyDescription"
-      [service]="appServiceName"
-      [logoAssetPath]="logoAssetPath"
+      [name]="name"
+      [company]="company"
+      [description]="description"
+      [logo]="logo"
+      [remember]="remember"
     ></app-login-view>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,13 +44,11 @@ export class LoginComponent implements OnDestroy {
   // View text declarations
 
   // #region Component inputs
-  @Input() moduleName!: string;
-  @Input() companyName!: string;
-  @Input() companyDescription!: string;
-  @Input() appServiceName!: string;
-  @Input() loginHeadingText!: string;
-  @Input() logoAssetPath!: string;
-  @Input() hasRememberMe!: string;
+  @Input() logo!: string | null | undefined;
+  @Input() company!: string | null | undefined;
+  @Input() description!: string | null | undefined;
+  @Input() name!: string | null | undefined;
+  @Input() remember!: boolean;
   // #region Component inputs
 
   performingAction$ = (this.auth as AuthService)?.actionsState$.pipe(
@@ -66,28 +67,18 @@ export class LoginComponent implements OnDestroy {
 
   // Class constructor
   constructor(
-    public readonly route: ActivatedRoute,
     @Inject(AUTH_SERVICE) private auth: AuthServiceInterface,
-    public readonly injector: Injector
+    public readonly injector: Injector,
+    @Inject(UI_METADATA) @Optional() metadata?: UIMetadata | null
   ) {
     // #region Set Login component properties
-    const {
-      moduleName,
-      loginHeadingText,
-      logoAssetPath,
-      hasRememberMe,
-      path,
-      companyName,
-      companyDescription,
-      appServiceName,
-    } = this.route.snapshot.data;
-    this.moduleName = moduleName;
-    this.companyName = companyName;
-    this.loginHeadingText = loginHeadingText;
-    this.companyDescription = companyDescription;
-    this.appServiceName = appServiceName;
-    this.logoAssetPath = logoAssetPath;
-    this.hasRememberMe = hasRememberMe;
+    const m = metadata ?? ({} as UIMetadata);
+    const { dashboard, remember, logo, name, description, company } = m;
+    this.remember = remember ?? false;
+    this.logo = logo;
+    this.name = name;
+    this.description = description;
+    this.company = company;
     // #endregion  Set Login component properties
 
     this.auth.signInState$
@@ -97,10 +88,10 @@ export class LoginComponent implements OnDestroy {
           if (state) {
             // TODO : NAVIGATE TO THE APPLICATION DASHBOARD
             setTimeout(() => {
-              if (typeof path === "function" && path !== null) {
-                return path(this.injector, state);
+              if (typeof dashboard === "function" && dashboard !== null) {
+                return dashboard(this.injector, state);
               }
-              return this.router.navigateByUrl(`/${path}`);
+              return this.router.navigateByUrl(`/${dashboard}`);
             }, 300);
           }
         })

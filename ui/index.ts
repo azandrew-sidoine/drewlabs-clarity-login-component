@@ -16,6 +16,8 @@ export {
 } from "./directives";
 export { TokenCanAnyPipe, TokenCanPipe } from "./pipes";
 
+export { provideUIMetadata } from './providers';
+
 /** Exported standalone pipes */
 export const AUTH_PIPES = [
   TokenCanAnyPipe,

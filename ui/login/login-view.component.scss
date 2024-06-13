@@ -1,7 +1,154 @@
-.app-login-logo-description {
-    margin-top: 1rem;
+.login-wrapper {
+  display: flex;
+  height: 100%;
+  background-size: var(--login-bg-size, cover);
+  background-position: var(--login-bg-position, 0 0);
+  background-repeat: var(--login-bg-repeat, no-repeat);
+  color: var(--ft-work-dark-fg-color);
+
+  .login {
+    background: var(--login-bg-color, #fff);
+    border: none;
+    margin: 0 auto;
+    position: inherit;
+    padding: 24px;
+
+    .logo {
+      position: relative;
+      max-width: 100%;
+      img {
+        position: relative;
+        width: 28%;
+        max-width: 100%;
+        margin-bottom: 0.6rem;
+      }
+      .company-name {
+        display: block;
+        // TODO: Add more styles to company HTML element
+      }
+    }
+
+    .links {
+      margin-top: 2rem;
+      img {
+        width: 100%;
+      }
+    }
+    .module {
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .module,
+    .title .hint {
+      color: var(--ft-work-dark-fg-color);
+    }
+
+    .title .hint {
+      margin: 0;
+      font-size: 12px;
+      text-transform: initial;
+      line-height: 1.2;
+    }
+
+    &:after {
+      background: transparent;
+    }
+    .login-group {
+      max-width: 400px;
+      padding: 0 0 1rem;
+
+      //   padding: 24px 27px;
+      border-radius: 8px;
+      .btn {
+        margin: 0rem 0 0;
+        width: 50%;
+        text-align: left;
+      }
+    }
+
+    .title {
+      margin-bottom: 1rem;
+    }
+
+    h6 {
+      margin: 0;
+    }
+
+    .footer {
+      text-align: center;
+      .powered-by {
+        margin-top: 1rem;
+        padding: 0.5em 0.3em;
+        text-align: left;
+        font-size: 0.5rem;
+        margin-top: 1rem;
+      }
+    }
+  }
+
+  .login-overlay {
+    position: relative;
+    width: 100%;
+  }
 }
 
-.app-login-footer {
-    text-align: center;
+.center {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.input-container,
+.input-container:not(.has-error) {
+  display: flex;
+  padding: var(--login-input-padding, 0 16px);
+  width: 100%;
+  line-height: 30px;
+  height: var(--login-input-height, 42px);
+  border: var(--login-input-border-width, 1px) solid
+    var(--login-input-border-color, #dddbda);
+  border-radius: 4px;
+  background-color: var(--login-input-bg-color, #fff);
+  color: rgb(8, 7, 7);
+  transition: border 0.1s linear, background-color 0.1s linear;
+  margin: 0 0 0.75rem 0;
+}
+
+.input-container > input {
+  display: inline-block;
+  outline: none;
+  width: 100%;
+  border: none;
+}
+
+.input-container * {
+  padding: 5px 0 0 0;
+}
+
+.input-container:focus-within {
+  border-width: var(--login-input-focus-border-width, 2px);
+  border-color: #1b96ff;
+  box-shadow: rgb(1, 118, 211) 0px 0px 3px 0px;
+}
+
+.input-container:has(input.has-error) {
+  border-width: var(--login-input-focus-border-width, 2px);
+  border-color: #ff1b2e;
+  box-shadow: rgb(211, 68, 68) 0px 0px 3px 0px;
+}
+
+.sr-only {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  padding: 0;
+  border: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  top: 0;
+  left: 0;
 }
