@@ -14,21 +14,21 @@
           <h5 class="hint">{{ service }}</h5>
         </div>
         <clr-input-container>
-          <label class="clr-sr-only">{{ 'auth.login.username.label' | text}}</label>
+          <label class="clr-sr-only">{{ 'login.username.label' | text}}</label>
           <input aria-label="username" type="text" name="username" clrInput
-            [placeholder]="'auth.login.username.label' | text" formControlName="username" />
+            [placeholder]="'login.username.label' | text" formControlName="username" />
         </clr-input-container>
         <clr-password-container>
-          <label class="clr-sr-only">{{'auth.login.password.label' | text}}</label>
+          <label class="clr-sr-only">{{'login.password.label' | text}}</label>
           <input aria-label="password" type="password" name="password" clrPassword
-            [placeholder]="'auth.login.password.label' | text" formControlName="password" />
+            [placeholder]="'login.password.label' | text" formControlName="password" />
         </clr-password-container>
         <clr-checkbox-wrapper *ngIf="hasRememberMe">
-          <label>{{ 'auth.login.remember.label'| text}}</label>
+          <label>{{ 'login.remember.label'| text}}</label>
           <input aria-label="remember-me" type="checkbox" name="remember" clrCheckbox formControlName="remember" />
         </clr-checkbox-wrapper>
         <button title="sumit-button" type="submit" [disabled]="performingAction" class="btn btn-primary">{{
-          'auth.login.submit.text' | text}}</button>
+          'login.submit.text' | text}}</button>
 
         <div class="login-links">
           <!-- Login Links -->
