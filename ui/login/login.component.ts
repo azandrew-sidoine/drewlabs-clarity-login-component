@@ -9,11 +9,15 @@ import {
 import { ActivatedRoute, Router } from "@angular/router";
 import { map, tap } from "rxjs/operators";
 import { Subject, firstValueFrom } from "rxjs";
-import { AuthServiceInterface } from "../types";
-import { AuthActions, AuthStrategies, AUTH_SERVICE } from "../constants";
-import { AuthService } from "../core";
+import { AuthServiceInterface } from "../../types";
+import { AuthActions, AuthStrategies, AUTH_SERVICE } from "../../constants";
+import { AuthService } from "../../core";
+import { LoginViewComponent } from "./login-view.component";
+import { CommonModule } from "@angular/common";
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, LoginViewComponent],
   selector: "app-login",
   template: `
     <app-login-view

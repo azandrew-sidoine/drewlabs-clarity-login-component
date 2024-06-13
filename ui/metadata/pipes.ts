@@ -1,13 +1,14 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({
-  name: 'substr',
+  standalone: true,
+  name: "substr",
   pure: true,
 })
 export class SubstrPipe implements PipeTransform {
   //
   transform(value: string | null | undefined, length: number = 20) {
-    value = value ?? '';
+    value = value ?? "";
     return value.length > length ? `${value.substring(0, length)}...` : value;
   }
 }

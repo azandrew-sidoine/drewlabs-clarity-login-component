@@ -16,6 +16,7 @@ import { tokenCanAny } from "../../core";
 import { cancelSubscriptions } from "./helpers";
 
 @Directive({
+  standalone: true,
   selector: "[ifHasAnyScope]",
 })
 export class IfHasAnyScopeDirective

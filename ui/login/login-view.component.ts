@@ -1,3 +1,4 @@
+import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,11 +12,23 @@ import {
   FormArray,
   FormBuilder,
   FormGroup,
+  FormsModule,
   NgForm,
+  ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { COMMON_PIPES } from "@azlabsjs/ngx-common";
+import { ClarityModule } from "@clr/angular";
 
 @Component({
+  standalone: true,
+  imports: [
+    CommonModule,
+    ...COMMON_PIPES,
+    FormsModule,
+    ReactiveFormsModule,
+    ClarityModule,
+  ],
   selector: "app-login-view",
   templateUrl: "./login-view.component.html",
   styleUrls: ["./login-view.component.css"],

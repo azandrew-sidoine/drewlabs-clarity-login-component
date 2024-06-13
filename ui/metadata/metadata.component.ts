@@ -1,14 +1,19 @@
-import { Component, Inject } from "@angular/core";
-import { AUTH_SERVICE } from "../../../constants";
-import { AuthServiceInterface } from "../../../types";
+import { ChangeDetectionStrategy, Component, Inject } from "@angular/core";
+import { AUTH_SERVICE } from "../../constants";
+import { AuthServiceInterface } from "../../types";
 import { filter, map } from "rxjs";
+import { CommonModule } from "@angular/common";
+import { SubstrPipe } from "./pipes";
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, SubstrPipe],
   selector: "ngx-user-metadata",
-  templateUrl: "./user-metadata.component.html",
-  styleUrls: ["./user-metadata.component.scss"],
+  templateUrl: "./metadata.component.html",
+  styleUrls: ["./metadata.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserMetadaComponent {
+export class MetadataComponent {
   state$ = this.auth.signInState$.pipe(
     filter((state) => typeof state !== "undefined" && state !== null),
     filter(

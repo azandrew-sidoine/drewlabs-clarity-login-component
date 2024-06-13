@@ -1,12 +1,22 @@
-import { Component, Inject, Injector, OnDestroy } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  Injector,
+  OnDestroy,
+} from "@angular/core";
 import { AuthServiceInterface } from "../../types";
 import { AUTH_SERVICE, AuthStrategies } from "../../constants";
 import { ActivatedRoute, Router } from "@angular/router";
 import { filter, lastValueFrom, mergeMap, tap, timer } from "rxjs";
+import { CommonModule } from "@angular/common";
 
 @Component({
+  standalone: true,
+  imports: [CommonModule],
   selector: "auth-callback",
-  templateUrl: "./auth-callback.component.html",
+  templateUrl: "./callback.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthCallbackComponent implements OnDestroy {
   // #region Component properties

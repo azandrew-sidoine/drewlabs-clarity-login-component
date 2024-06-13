@@ -4,6 +4,7 @@ import { AUTH_SERVICE } from "../../../constants";
 import { filter, map } from "rxjs";
 
 @Pipe({
+  standalone: true,
   name: "authCallbackUrl",
   pure: true,
 })

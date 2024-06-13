@@ -12,6 +12,7 @@ import { AuthServiceInterface } from "../../types";
 import { cancelSubscriptions } from "./helpers";
 
 @Directive({
+  standalone: true,
   selector: "[ifAuthenticated]",
 })
 export class IfAuthenticatedDirective implements AfterViewInit, OnDestroy {

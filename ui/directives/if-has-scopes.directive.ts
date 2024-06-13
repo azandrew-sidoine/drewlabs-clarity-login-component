@@ -16,6 +16,7 @@ import { AUTH_SERVICE } from "../../constants";
 import { AuthServiceInterface } from "../../types";
 
 @Directive({
+  standalone: true,
   selector: "[ifHasScopes]",
 })
 export class IfHasScopesDirective
