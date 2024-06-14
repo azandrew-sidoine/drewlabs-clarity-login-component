@@ -1,47 +1,53 @@
-import { tap } from 'rxjs/operators';
-import { SignInResultInterface } from '../../types';
+import { tap } from "rxjs/operators";
+import { SignInResultInterface } from "../../types";
 import {
   AUTHENTICATED_RESULT,
   HttpClient,
   ResponseTypes,
-} from '../../testing/stubs';
-import { LocalStrategy } from './local/strategy';
+} from "../../testing/stubs";
+import { LocalStrategy } from "./local/strategy";
+import { useLocalStrategy } from "./local/providers";
+import { SingInResultType } from "./local/types";
 
-describe('LocalStrategy', () => {
+describe("LocalStrategy", () => {
   let service: LocalStrategy;
   let client = new HttpClient();
 
   beforeEach(() => {
-    service = new LocalStrategy(client, '');
+    service = useLocalStrategy({
+      client,
+      host: "http://127.0.0.1:3000",
+      endpoints: {},
+    });
   });
 
-  it('#signIn should return false', async (done: DoneFn) => {
+  it("#signIn should return false", async (done: DoneFn) => {
     client.setResponseType(ResponseTypes.UNAUTHENTICATED);
     const result = await service.signIn().toPromise();
     expect(result).toBe(false);
     done();
   });
 
-  it('#signIn should return false', async (done: DoneFn) => {
+  it("#signIn should return false", async (done: DoneFn) => {
     client.setResponseType(ResponseTypes.LOCKED);
     const result = await service.signIn().toPromise();
     expect(result).toBe(false);
     done();
   });
 
-  it('#signIn should return an observable of true', async (done: DoneFn) => {
+  it("#signIn should return an observable of true", async (done: DoneFn) => {
     client.setResponseType(ResponseTypes.AUTHENTICATED);
-    let loginState!: SignInResultInterface | undefined;
+    let loginState!: SingInResultType;
     service.signInState$.pipe(tap((state) => (loginState = state))).subscribe();
-    const result = await service.signIn().toPromise();
+    await service.signIn().toPromise();
     expect(loginState).toEqual({
       ...AUTHENTICATED_RESULT,
       id: 1,
-      emails: ['contact@azlabs.tg'],
-      name: 'APPSYSADMIN',
+      emails: ["contact@azlabs.tg"],
+      name: "APPSYSADMIN",
       photoUrl: undefined,
-      firstName: 'ADMIN',
-      lastName: 'MASTER',
+      firstName: "ADMIN",
+      lastName: "MASTER",
       phoneNumber: undefined,
       address: undefined,
     } as SignInResultInterface);

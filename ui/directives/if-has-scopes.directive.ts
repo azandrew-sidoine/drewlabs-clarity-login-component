@@ -11,8 +11,7 @@ import {
 } from "@angular/core";
 import { cancelSubscriptions } from "./helpers";
 import { Subscription, distinctUntilChanged, map, tap } from "rxjs";
-import { tokenCan } from "../../core";
-import { AUTH_SERVICE } from "../../constants";
+import { AUTH_SERVICE, tokenCan } from "../../core";
 import { AuthServiceInterface } from "../../types";
 
 @Directive({

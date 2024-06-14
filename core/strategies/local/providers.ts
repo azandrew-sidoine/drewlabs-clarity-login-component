@@ -1,21 +1,19 @@
-import { HttpClient } from "@angular/common/http";
 import { LocalStrategy } from "./strategy";
-import { SignInResultInterface } from "../../../types";
+import { RequestClient, SignInResultInterface } from "../../../types";
 import { RESTInterfaceType, UserInterface, createAuthProvider } from "./auth";
 
+/** @internal */
 type ProvideLocalStorageType = {
-  client: HttpClient;
+  client: RequestClient;
   host: string;
-  storage: Storage;
+  storage?: Storage;
   endpoints?: Partial<RESTInterfaceType>;
   driver?: string;
   authResultCallback?: (result: Partial<SignInResultInterface>) => boolean;
   userResultCallback?: (result: UserInterface) => void;
 };
 
-/**
- * Factory function to create a local strategy instance
- */
+/** @description Factory function to create a local strategy instance */
 export function useLocalStrategy(param: ProvideLocalStorageType) {
   const {
     client,
@@ -39,9 +37,4 @@ export function useLocalStrategy(param: ProvideLocalStorageType) {
     authResultCallback,
     userResultCallback
   );
-}
-
-
-export function useAuthTokenStrategy() {
-  
 }

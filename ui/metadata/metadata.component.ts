@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, Inject } from "@angular/core";
-import { AUTH_SERVICE } from "../../constants";
 import { AuthServiceInterface } from "../../types";
 import { filter, map } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { SubstrPipe } from "./pipes";
+import { AUTH_SERVICE } from "../../core";
 
 @Component({
   standalone: true,
@@ -33,6 +33,5 @@ export class MetadataComponent {
     )
   );
 
-  // Class constructor
   constructor(@Inject(AUTH_SERVICE) private auth: AuthServiceInterface) {}
 }

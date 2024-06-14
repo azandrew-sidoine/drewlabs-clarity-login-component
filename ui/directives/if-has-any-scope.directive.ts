@@ -9,10 +9,9 @@ import {
   TemplateRef,
   ViewContainerRef,
 } from "@angular/core";
-import { AUTH_SERVICE } from "../../constants";
 import { AuthServiceInterface } from "../../types";
 import { Subscription, distinctUntilChanged, map, tap } from "rxjs";
-import { tokenCanAny } from "../../core";
+import { AUTH_SERVICE, tokenCanAny } from "../../core";
 import { cancelSubscriptions } from "./helpers";
 
 @Directive({
@@ -34,7 +33,6 @@ export class IfHasAnyScopeDirective
 
   // #region Component internal properties
   private _hasView: boolean = false;
-  private _showView: boolean = false;
   private _subscriptions: Subscription[] = [];
   // #endregion Component internal properties
 

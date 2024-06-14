@@ -6,10 +6,11 @@ import {
   OnDestroy,
 } from "@angular/core";
 import { AuthServiceInterface } from "../../types";
-import { AUTH_SERVICE, AuthStrategies } from "../../constants";
+import { AuthStrategies } from "../../constants";
 import { ActivatedRoute, Router } from "@angular/router";
 import { filter, lastValueFrom, mergeMap, tap, timer } from "rxjs";
 import { CommonModule } from "@angular/common";
+import { AUTH_SERVICE } from "../../core";
 
 @Component({
   standalone: true,

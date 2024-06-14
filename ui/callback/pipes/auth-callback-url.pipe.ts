@@ -1,7 +1,7 @@
 import { Inject, Pipe, PipeTransform } from "@angular/core";
 import { AuthServiceInterface, SignInResultInterface } from "../../../types";
-import { AUTH_SERVICE } from "../../../constants";
 import { filter, map } from "rxjs";
+import { AUTH_SERVICE } from "../../../core";
 
 @Pipe({
   standalone: true,

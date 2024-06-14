@@ -1,6 +1,5 @@
 export { LoginModule } from "./login.module";
 export { AuthStrategies } from "./constants";
-export { AUTH_SERVICE } from "./constants";
 
 // Exported types
 export {
@@ -10,7 +9,11 @@ export {
 } from "./types";
 
 /** Exported angular providers */
-export { provideRedirectUrl } from "./providers";
+export {
+  provideRedirectUrl,
+  provideAuthEventsHandler,
+  provideAuthConfig,
+} from "./providers";
 
 /** Exported core components and types */
 export {
@@ -18,4 +21,12 @@ export {
   tokenCan,
   tokenCanAny,
   provideAuthActionHandlersFactory,
+  AUTH_SERVICE
 } from "./core";
+
+/** Exported interceptor factories */
+export {
+  authClientInterceporFactory,
+  bearerTokenInterceptorFactory,
+  http401LogoutFactory,
+} from "./interceptors";

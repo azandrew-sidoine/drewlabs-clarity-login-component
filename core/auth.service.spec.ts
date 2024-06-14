@@ -17,7 +17,7 @@ import {
   ResponseTypes,
 } from '../testing/stubs';
 import { AuthService } from './auth.service';
-import { LocalStrategy } from './strategies';
+import { LocalStrategy, useLocalStrategy } from './strategies';
 
 describe('LocalStrategy', () => {
   let client = new HttpClient();
@@ -34,7 +34,11 @@ describe('LocalStrategy', () => {
             strategies: [
               {
                 id: AuthStrategies.LOCAL,
-                strategy: new LocalStrategy(client, ''),
+                strategy: useLocalStrategy({
+                  client,
+                  host: "http://127.0.0.1:3000",
+                  endpoints: {},
+                }),
               },
             ],
             autoLogin: true,

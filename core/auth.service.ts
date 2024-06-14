@@ -12,11 +12,9 @@ import {
 import {
   AuthActions,
   AuthStrategies,
-  AUTH_SERVICE_CONFIG,
   ERR_LOGIN_STRATEGY_NOT_FOUND,
   ERR_NOT_INITIALIZED,
   ERR_NOT_SUPPORTED_FOR_REFRESH_TOKEN,
-  AUTH_ACTION_HANDLERS,
 } from "../constants";
 import {
   AuthServiceConfig,
@@ -27,6 +25,7 @@ import {
   AuthActionHandlers,
 } from "../types";
 import { catchError, startWith, takeUntil, tap } from "rxjs/operators";
+import { AUTH_ACTION_HANDLERS, AUTH_SERVICE_CONFIG } from "./tokens";
 
 const isPromise = (p: any) => {
   return typeof p === "object" && typeof p.then === "function" ? true : false;
@@ -50,18 +49,21 @@ export class AuthService
   private _signInState$ = new BehaviorSubject<
     SignInResultInterface | undefined | null
   >(null);
+
   /** An `Observable` that one can subscribe to get the current logged in user information */
   public signInState$ = this._signInState$.asObservable();
 
-  /* Consider making this an enum comprising LOADING, LOADED, FAILED etc. */
   private initialized = false;
-  private _actionsState$ = new ReplaySubject<AuthActions>(1);
+  private _actionsState$ = new ReplaySubject<AuthActions>(AuthActions.COMPLETE);
 
   public actionsState$ = this._actionsState$.pipe(
     startWith(AuthActions.ONGOING)
   );
-
   private _destroy$ = new Subject<void>();
+
+  get authToken() {
+    return this._signInResult?.authToken;
+  }
 
   /**
    * @param config A `AuthServiceConfig` object or a `Promise` that resolves to a `AuthServiceConfig` object

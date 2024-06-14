@@ -7,9 +7,9 @@ import {
   ViewContainerRef,
 } from "@angular/core";
 import { Subscription, distinctUntilChanged, map, tap } from "rxjs";
-import { AUTH_SERVICE } from "../../constants";
 import { AuthServiceInterface } from "../../types";
 import { cancelSubscriptions } from "./helpers";
+import { AUTH_SERVICE } from "../../core";
 
 @Directive({
   standalone: true,

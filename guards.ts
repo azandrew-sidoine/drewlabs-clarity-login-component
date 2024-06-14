@@ -7,15 +7,38 @@ import {
   RouterStateSnapshot,
   UrlSegment,
 } from "@angular/router";
-import { map, mergeMap, timer } from "rxjs";
-import { AUTH_SERVICE } from "../constants";
-import { REDIRECT_URL } from "../providers";
+import { map, mergeMap, tap, timer } from "rxjs";
 import { DOCUMENT } from "@angular/common";
-import { useAuthenticationResult } from "./helpers";
+import { REDIRECT_URL } from "./providers";
+import { AUTH_SERVICE } from "./core";
 
-/**
- * @internal
- */
+/** @description Factory function for redirect url */
+export function authResult(value: boolean, redirectTo: string) {
+  const isValidURL = (url: string) => {
+    try {
+      const _url = new URL(url);
+      return typeof _url.protocol !== "undefined" && _url.protocol !== null;
+    } catch {
+      return false;
+    }
+  };
+  return (router: Router, window: Window) => {
+    const redirectToURL = () => {
+      window.location.href = redirectTo;
+      return false;
+    };
+    if (value === true) {
+      return value;
+    }
+
+    // case redirect to is a valid HTTP url we use the redirectToURL function
+    return isValidURL(redirectTo)
+      ? redirectToURL()
+      : router.createUrlTree([redirectTo ?? "/login"]);
+  };
+}
+
+/** @internal */
 function matchAny(scopes: string[], appScopes: string[]) {
   const _scopes = Array.isArray(appScopes) ? appScopes : [appScopes];
   // Case the list of application scopes is equal to 0, return true
@@ -35,9 +58,7 @@ function matchAny(scopes: string[], appScopes: string[]) {
   return exists;
 }
 
-/**
- * @internal
- */
+/** @internal */
 function match(scopes: string[], appScopes: string[]) {
   const _scopes = Array.isArray(appScopes) ? appScopes : [appScopes];
   // Case the list of application scopes is equal to 0, return true
@@ -56,9 +77,7 @@ function match(scopes: string[], appScopes: string[]) {
   return exists;
 }
 
-/**
- * Activate guard functional interface
- */
+/** @description Activate guard functional interface */
 export const canActivate: CanActivateFn = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
@@ -74,7 +93,7 @@ export const canActivate: CanActivateFn = (
       auth.signInState$.pipe(
         map((state) => (state?.authToken ? true : false)),
         map((signedIn) =>
-          useAuthenticationResult(signedIn, redirectTo)(
+          authResult(signedIn, redirectTo)(
             router,
             // location,
             defaultView ?? window
@@ -85,9 +104,7 @@ export const canActivate: CanActivateFn = (
   );
 };
 
-/**
- * Angular child route activation guard
- */
+/** @description Angular child route activation guard */
 export function canActivateChild(
   childRoute: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
@@ -97,13 +114,12 @@ export function canActivateChild(
   const { defaultView } = inject(DOCUMENT);
   const auth = inject(AUTH_SERVICE);
   const redirectTo = inject(REDIRECT_URL);
-
   return timer(300).pipe(
     mergeMap(() =>
       auth.signInState$.pipe(
         map((state) => (state?.authToken ? true : false)),
         map((signedIn) =>
-          useAuthenticationResult(signedIn, redirectTo)(
+          authResult(signedIn, redirectTo)(
             router,
             // location,
             defaultView ?? window
@@ -114,10 +130,7 @@ export function canActivateChild(
   );
 }
 
-/**
- * Funtional interface applied to canActivate guard that checks if connected user
- * token has any of the provided scopes in the guard
- */
+/** @description Funtional interface applied to canActivate guard that checks if connected user token has any of the provided scopes in the guard */
 export function tokenCanAnyActivate(
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
@@ -139,7 +152,7 @@ export function tokenCanAnyActivate(
           return matchAny(scopes, _scopes);
         }),
         map((result) =>
-          useAuthenticationResult(result, redirectTo)(
+          authResult(result, redirectTo)(
             router,
             // location,
             defaultView ?? window
@@ -150,10 +163,7 @@ export function tokenCanAnyActivate(
   );
 }
 
-/**
- * Funtional interface applied to canActivate guard that checks if connected user
- * token has all of the provided scopes in the guard
- */
+/** @description Funtional interface applied to canActivate guard that checks if connected user token has all of the provided scopes in the guard */
 export function tokenCanActivate(
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
@@ -175,7 +185,7 @@ export function tokenCanActivate(
           return match(scopes, _scopes);
         }),
         map((result) =>
-          useAuthenticationResult(result, redirectTo)(
+          authResult(result, redirectTo)(
             router,
             // location,
             defaultView ?? window
@@ -212,7 +222,7 @@ export function tokenCanAnyMatch(route: Route, segments: UrlSegment[]) {
           );
         }),
         map((result) =>
-          useAuthenticationResult(result, redirectTo)(
+          authResult(result, redirectTo)(
             router,
             // location,
             defaultView ?? window
@@ -249,7 +259,7 @@ export function tokenCanMatch(route: Route, segments: UrlSegment[]) {
           );
         }),
         map((result) =>
-          useAuthenticationResult(result, redirectTo)(
+          authResult(result, redirectTo)(
             router,
             // location,
             defaultView ?? window

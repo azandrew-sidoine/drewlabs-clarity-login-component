@@ -2,17 +2,14 @@ import { Observable } from "rxjs";
 import { AuthStrategies } from "../constants/strategies";
 import { SignInResultInterface } from "./signin";
 import { StrategyInterface } from "./strategy";
+import { Injector } from "@angular/core";
 
 export interface AuthStrategiesContainer {
-  /**
-   * @description Returns the strategy matching the user provided id or undefined if not found
-   */
+  /** @description Returns the strategy matching the user provided id or undefined if not found */
   getStrategy(id: AuthStrategies): StrategyInterface | undefined;
 }
 
-/**
- * An interface to define the shape of the service configuration options.
- */
+/** @description An interface to define the shape of the service configuration options. */
 export interface AuthServiceConfig {
   autoLogin?: boolean;
   strategies: { id: string; strategy: StrategyInterface }[];
@@ -34,10 +31,11 @@ export interface AuthActionHandlers {
  *
  */
 export interface AuthServiceInterface {
-  /**
-   * @description Signin operation result state
-   */
+  /** @description Signin operation result state */
   signInState$: Observable<SignInResultInterface | undefined | null>;
+
+  /** readonly authentication bearer token value  */
+  readonly authToken?: string | null;
 
   /**
    * A method used to sign in a user with a specific `Strategy`.
@@ -65,3 +63,25 @@ export interface AuthServiceInterface {
    */
   refreshSignInState(authToken: string, provider?: string): Observable<boolean>;
 }
+
+/**  @internal */
+export type Callback = (...args: any) => unknown;
+
+/** @internal */
+export type ActionHandlersObjectType = {
+  success: Callback;
+  failure: Callback;
+  error: Callback;
+  logout?: (
+    injector: Injector,
+    provider?: string,
+    signInResult?: SignInResultInterface
+  ) => void | false;
+  performingAction?: Callback;
+  loginPath?: string;
+};
+
+/** @description Action handlers object type declaration */
+export type ActionHandlersType =
+  | ActionHandlersObjectType
+  | ((injector: Injector) => ActionHandlersObjectType);

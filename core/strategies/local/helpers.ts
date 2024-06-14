@@ -1,9 +1,7 @@
 import { SignInResultInterface } from "../../../types";
 import { UserInterface } from "./auth";
 
-/**
- * Merge user metadata in sign in result object
- */
+/** @description Merge user metadata in sign in result object */
 export function mergeUserMedata(
   signInResult: Partial<SignInResultInterface>,
   user: UserInterface

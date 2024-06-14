@@ -13,11 +13,11 @@ export {
   AuthServiceInterface,
   AuthStrategiesContainer,
   AuthActionHandlers,
+  ActionHandlersType,
 } from "./auth";
 
 export { RequestClient } from "./request";
 
-// Type utilities
 export { RequiredProp } from "./utils";
 
 export { ProvideAuthServiceConfig } from "./providers";

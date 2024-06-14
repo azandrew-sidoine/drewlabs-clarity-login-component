@@ -14,4 +14,8 @@ export { tokenCan$, tokenCanAny$ } from "./rx";
 // Strategies exports
 export * from "./strategies";
 
-export { ActionHandlersType } from "./types";
+export {
+  AUTH_ACTION_HANDLERS,
+  AUTH_SERVICE,
+  AUTH_SERVICE_CONFIG,
+} from "./tokens";

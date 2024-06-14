@@ -1,6 +1,9 @@
 import { first, timer } from "rxjs";
-import { RequiredProp, SignInResultInterface } from "../types";
-import { ActionHandlersType } from "./types";
+import {
+  ActionHandlersType,
+  RequiredProp,
+  SignInResultInterface,
+} from "../types";
 import { Injector } from "@angular/core";
 import { Router } from "@angular/router";
 
@@ -87,9 +90,7 @@ export function tokenCanAny(
   return result;
 }
 
-/**
- * Provides a factory function for authentication action handlers
- */
+/** @description Provides a factory function for authentication action handlers */
 export function provideAuthActionHandlersFactory(handlers: ActionHandlersType) {
   return (injector: Injector, router: Router) => {
     const _handlers =

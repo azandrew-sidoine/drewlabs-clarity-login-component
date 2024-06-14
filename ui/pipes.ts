@@ -4,8 +4,7 @@ import {
   RequiredProp,
   SignInResultInterface,
 } from "../types";
-import { tokenCanAny } from "../core";
-import { AUTH_SERVICE } from "../constants";
+import { AUTH_SERVICE, tokenCanAny } from "../core";
 import { map } from "rxjs";
 import { tokenCan } from "../core";
 
