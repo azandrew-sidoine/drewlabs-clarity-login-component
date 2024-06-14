@@ -15,7 +15,7 @@ import { AuthActions, AuthStrategies } from "../../constants";
 import { AUTH_SERVICE, AuthService } from "../../core";
 import { LoginViewComponent } from "./login-view.component";
 import { CommonModule } from "@angular/common";
-import { UI_METADATA } from "../providers";
+import { AUTH_METADATA } from "../providers";
 import { UIMetadata } from "../type";
 
 @Component({
@@ -69,7 +69,7 @@ export class LoginComponent implements OnDestroy {
   constructor(
     @Inject(AUTH_SERVICE) private auth: AuthServiceInterface,
     public readonly injector: Injector,
-    @Inject(UI_METADATA) @Optional() metadata?: UIMetadata | null
+    @Inject(AUTH_METADATA) @Optional() metadata?: UIMetadata | null
   ) {
     // #region Set Login component properties
     const m = metadata ?? ({} as UIMetadata);
