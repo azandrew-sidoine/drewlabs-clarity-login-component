@@ -1,24 +1,25 @@
 <div class="login-wrapper">
   <div class="login-overlay" *ngIf="formGroup">
     <form class="login" #loginForm="ngForm" [formGroup]="formGroup" (ngSubmit)="onFormSubmit(formGroup)">
-      <div class="logo center" *ngIf="logo">
-        <img alt="application logo" [src]="logo" [alt]="company" />
-        <span class="company-name">{{ company }}</span>
-      </div>
       <div class="login-group">
-        <div class="title center" *ngIf="name">
+        <div class="logo left" *ngIf="logo">
+          <img alt="application logo" [src]="logo" [alt]="company" />
+        </div>
+        <div class="title left" *ngIf="name">
           <span class="module">{{ name }}</span>
-          <!-- <span class="hint">{{ description }}</span> -->
+          <span class="company-name">{{ company }}</span>
         </div>
         <div class="input-container">
           <label class="sr-only">{{ 'login.username.label' | text}}</label>
-          <input aria-label="username" type="text" name="username" [placeholder]="'login.username.label' | text"
+          <input [class.has-error]="!!formGroup.get('username')?.touched && formGroup.get('username')?.errors !== null"
+            aria-label="username" type="text" name="username" [placeholder]="'login.username.label' | text"
             formControlName="username" />
         </div>
         <div class="input-container">
           <label class="sr-only">{{'login.password.label' | text}}</label>
-          <input password [class.has-error]="formGroup.get('password')?.errors !== null" aria-label="password"
-            [type]="'password'" name="password" [placeholder]="'login.password.label' | text"
+          <input password
+            [class.has-error]="!!formGroup.get('password')?.touched && formGroup.get('password')?.errors !== null"
+            aria-label="password" [type]="'password'" name="password" [placeholder]="'login.password.label' | text"
             formControlName="password" />
           <app-password-toggle (stateChange)="passwordInputRef?.setTypeAttribute($event)"
             [state]="'password'"></app-password-toggle>
@@ -27,7 +28,7 @@
           <label>{{ 'login.remember.label'| text}}</label>
           <input aria-label="remember-me" type="checkbox" name="remember" clrCheckbox formControlName="remember" />
         </clr-checkbox-wrapper>
-        <button title="sumit-button" type="submit" [disabled]="performingAction" class="btn btn-primary">{{
+        <button title="sumit-button" type="submit" [disabled]="performingAction" class="submit-btn btn btn-primary">{{
           'login.submit.text' | text}}</button>
 
         <div class="links">

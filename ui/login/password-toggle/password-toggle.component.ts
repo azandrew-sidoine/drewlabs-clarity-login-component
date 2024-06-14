@@ -16,6 +16,7 @@ type StateType = "text" | "password";
   imports: [CommonModule],
   selector: "app-password-toggle",
   templateUrl: "./password-toggle.component.html",
+  styleUrls: ["./password-toggle.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PasswordToggleComponent {
