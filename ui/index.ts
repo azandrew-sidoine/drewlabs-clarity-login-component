@@ -6,6 +6,7 @@ import {
 } from "./directives";
 import { LoginComponent } from "./login";
 import { MetadataComponent } from "./metadata";
+import { OTPComponent } from "./otp";
 import { TokenCanAnyPipe, TokenCanPipe } from "./pipes";
 
 export { LoginComponent } from "./login";
@@ -15,8 +16,7 @@ export {
   IfHasScopesDirective,
 } from "./directives";
 export { TokenCanAnyPipe, TokenCanPipe } from "./pipes";
-
-export { provideAuthMetadata } from './providers';
+export { provideAuthMetadata } from "./providers";
 
 /** Exported standalone pipes */
 export const AUTH_PIPES = [
@@ -33,4 +33,5 @@ export const AUTH_DIRECTIVES = [
   AuthCallbackComponent,
   LoginComponent,
   MetadataComponent,
+  OTPComponent,
 ] as const;

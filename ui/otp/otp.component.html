@@ -1,0 +1,4 @@
+<ng-container *ngFor="let item of (size|newArray:''); let i=index">
+    <input [last]="size - 1" [class.has-error]="error" (valueChange)="handleValueChangeEvent(i, $event)" [value]="''"
+        [otp]="i" class="input" type="text" inputmode="numeric" maxlength="1" />
+</ng-container>

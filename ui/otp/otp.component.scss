@@ -1,0 +1,36 @@
+/* style.css */
+.input:not(.has-error) {
+  height: var(--otp-input-size, 42px);
+  width: var(--otp-input-size, 42px);
+  margin: 0 10px;
+  text-align: center;
+  font-size: var(--otp-input-font-size, 36px);
+  cursor: not-allowed;
+  pointer-events: none;
+  line-height: 30px;
+  border: var(--otp-input-border-width, 1.8px) solid
+    var(--otp-input-border-color, #dddbda);
+  box-shadow: #dddbda 0px 0px 2px 0px;
+  border-radius: 4px;
+  background-color: var(--otp-input-bg-color, #fff);
+  transition: border 0.1s linear, background-color 0.1s linear;
+  color: var(--otp-input-color, rgb(8, 7, 7));
+  outline: none;
+}
+
+.input:not(.has-error):focus {
+  border-width: var(--otp-input-focus-border-width, 2px);
+  border-color: #1b96ff;
+  box-shadow: rgb(1, 118, 211) 0px 0px 3px 0px;
+}
+
+.input:nth-child(1) {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.input:has(.has-error) {
+  border-width: var(--login-input-focus-border-width, 2px);
+  border-color: #ff1b2e;
+  box-shadow: rgb(211, 68, 68) 0px 0px 3px 0px;
+}
