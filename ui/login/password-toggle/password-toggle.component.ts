@@ -39,7 +39,6 @@ export class PasswordToggleComponent {
   //   constructor(private cdRef: ChangeDetectorRef | null) {}
 
   onToggle(state: StateType) {
-    console.log("On Toggle....", state);
     this._state = state;
     this.stateChange.emit(state);
   }
