@@ -36,6 +36,11 @@ export class OTPDirective {
     }
 
     // Focus the next Sibling input whenever the input value changes
+    // const pattern = /[0-9\+\-\ ]/;
+    // const inputChar = String.fromCharCode(event.charCode);
+    // if (!pattern.test(inputChar)) {
+    //   event.preventDefault();
+    // }
     if (value !== "") {
       if (this.index !== this.last) {
         (target.nextElementSibling as HTMLElement)?.focus();
