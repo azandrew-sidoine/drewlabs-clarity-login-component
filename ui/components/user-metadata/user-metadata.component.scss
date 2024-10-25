@@ -1,12 +1,11 @@
 .flexbox {
-    display: inline-block;
-  }
-  
-  .flexbox .item {
-    display: inline-block;
-    margin: 4px 8px;
-    font-size: .8rem;
-    font-weight: 400;
-    margin-top: var(--user-metadata-vertical-margin, .758rem);
-    height: var(--user-metadata-height, 1.8rem);
-  }
+  display: inline-block;
+}
+
+.flexbox .nav-text {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-top: var(--header-nav-text-margin-top, 0.758rem);
+  height: var(--header-nav-text-margin-top, 1.8rem);
+}
