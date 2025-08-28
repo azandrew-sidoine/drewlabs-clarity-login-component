@@ -1,20 +1,16 @@
-//#region Types
-
+//#region types
 import { SignInResultInterface } from "../../../types";
 
+/** exported sign in result type */
 export type SingInResultType = SignInResultInterface | null;
 
-/**
- * Auth clients configuration type declarations
- */
+/** auth clients configuration type declarations */
 export type AuthClientConfig = {
   id: string;
   secret: string;
 };
 
-/**
- * Auth result callback type declaration
- */
+/** auth result callback type declaration */
 export type AuthResultCallbackType = (
   result: Partial<SignInResultInterface>
 ) => boolean;

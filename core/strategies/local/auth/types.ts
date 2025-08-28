@@ -1,20 +1,16 @@
 import { Observable } from "rxjs";
-import { SignInResult } from "../../../../types";
+import { SignInResult, SignInResultInterface } from "../../../../types";
 
 export type AccessTokenType = {
   authToken?: string;
   authorizationCode?: string;
   expires_at: string;
-  id: string|number;
+  id: string | number;
   idToken: string;
   provider?: string;
 };
 
-/**
- * Type declaration for token user query result
- *
- * @internal
- */
+/** @deprecated type declaration for token user query result */
 export type UserInterface = {
   id: number | string;
   username: string;
@@ -32,39 +28,27 @@ export type UserInterface = {
 };
 
 /**
- * Signed in user resolver type declaration
+ * signed in user resolver type declaration
  */
 export type UserResolver = {
-  /**
-   * Sends request to authentication server to resolve signed in user
-   */
-  user(
-    token: string
-  ): Observable<UserInterface & { accessToken: AccessTokenType }>;
+  /** sends request to authentication server to resolve signed in user */
+  user(token: string): Observable<SignInResultInterface>;
 
-  /**
-   * Revoke the signed in user token
-   */
+  /** revoke the signed in user token */
   revoke(revoke?: boolean): Observable<any>;
 };
 
 /**
- * Sign in request handler type declaration
+ * sign in request handler type declaration
  */
 export type SignInRequestHandler = {
-  /**
-   * Send a sign request to the backend server
-   */
+  /** send a sign request to the backend server */
   sendRequest(params: Record<string, unknown>): Observable<SignInResult>;
 };
 
-/**
- * REST interface type enpoints type declarations
- *
- * @internal
- */
-export type RESTInterfaceType = {
-  users: string;
+/** @internal enpoints type declarations */
+export type Endpoints = {
+  me: string;
   signIn: string;
   signOut: string;
 };

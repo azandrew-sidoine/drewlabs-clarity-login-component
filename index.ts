@@ -21,7 +21,8 @@ export {
   tokenCan,
   tokenCanAny,
   provideAuthActionHandlersFactory,
-  AUTH_SERVICE
+  AUTH_SERVICE,
+  createAuthProvider,
 } from "./core";
 
 /** Exported interceptor factories */

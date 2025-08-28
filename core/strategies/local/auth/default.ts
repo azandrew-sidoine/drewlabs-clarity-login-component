@@ -1,8 +1,4 @@
-/**
- * Default REST endpoints
- *
- * @internal
- */
+/** @deprecated default endpoints */
 export const DEFAULT_ENDPOINTS = {
   users: "auth/v2/user",
   signIn: "auth/v2/login",

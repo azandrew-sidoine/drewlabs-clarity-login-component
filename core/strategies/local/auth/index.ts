@@ -2,7 +2,7 @@ export {
   UserResolver,
   SignInRequestHandler,
   UserInterface,
-  RESTInterfaceType,
+  Endpoints as RESTInterfaceType,
 } from "./types";
 
 // Exported auth provider

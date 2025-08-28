@@ -1,37 +1,25 @@
 import { LocalStrategy } from "./strategy";
-import { RequestClient, SignInResultInterface } from "../../../types";
-import { RESTInterfaceType, UserInterface, createAuthProvider } from "./auth";
+import { SignInResultInterface } from "../../../types";
+import { SignInRequestHandler, UserResolver } from "./auth";
 
 /** @internal */
 type ProvideLocalStorageType = {
-  client: RequestClient;
-  host: string;
+  provider: UserResolver & SignInRequestHandler;
   storage?: Storage;
-  endpoints?: Partial<RESTInterfaceType>;
   driver?: string;
   authResultCallback?: (result: Partial<SignInResultInterface>) => boolean;
-  userResultCallback?: (result: UserInterface) => void;
+  userResultCallback?: (result: SignInResultInterface) => void;
 };
 
-/** @description Factory function to create a local strategy instance */
+/** @description factory function to create a local strategy instance */
 export function useLocalStrategy(param: ProvideLocalStorageType) {
-  const {
-    client,
-    host,
-    storage,
-    endpoints,
-    driver,
-    authResultCallback,
-    userResultCallback,
-  } = param;
+  const { provider, storage, driver, authResultCallback, userResultCallback } =
+    param;
 
-  // Creates the auth provider instance
-  const authProvider = createAuthProvider(client, endpoints, host);
-
-  // Resolve the local strategy instance
+  // resolve the local strategy instance
   return new LocalStrategy(
-    authProvider,
-    authProvider,
+    provider,
+    provider,
     storage,
     driver ?? "default",
     authResultCallback,
