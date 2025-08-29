@@ -10,7 +10,7 @@
           <span class="company-name">{{ company }}</span>
         </div>
         <div class="input-container">
-          <label class="sr-only">{{ 'auth.login.username.label' | text}}</label>
+          <label class="sr-only">{{ 'auth.login.username.label' | text }}</label>
           <input [class.has-error]="!!formGroup.get('username')?.touched && formGroup.get('username')?.errors !== null"
             aria-label="username" type="text" name="username" [placeholder]="'auth.login.username.label' | text"
             formControlName="username" />
@@ -28,8 +28,7 @@
           <label>{{ 'auth.login.remember.label'| text }}</label>
           <input aria-label="remember-me" type="checkbox" name="remember" clrCheckbox formControlName="remember" />
         </clr-checkbox-wrapper>
-        <button title="sumit-button" type="submit" [disabled]="performingAction" class="submit-btn btn btn-primary">{{
-          'auth.login.submit' | text }}</button>
+        <button title="sumit-button" type="submit" [disabled]="performingAction" class="submit-btn btn btn-primary">{{ 'auth.login.submit' | text }}</button>
 
         <div class="links">
           <!-- Login Links -->
