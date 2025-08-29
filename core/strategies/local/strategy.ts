@@ -96,7 +96,7 @@ export class LocalStrategy implements StrategyInterface {
     });
   }
 
-  refreshSignInState(authToken: string) {
+  refreshSignInState(authToken: string, expiresAt?: number) {
     return this.userResolver.user(authToken).pipe(
       map((user) => {
         // case strategy user provides a user result callback, we invoke
@@ -105,7 +105,7 @@ export class LocalStrategy implements StrategyInterface {
           this.userResultCallback.bind(this)(user);
         }
 
-        this._signInState$.next({authToken, ...user});
+        this._signInState$.next({ authToken, expiresAt, ...user });
         if (this.cache) {
           this.cache.setItem(SIGNIN_RESULT_CACHE, JSON.stringify(user));
         }

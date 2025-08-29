@@ -57,11 +57,12 @@ export interface AuthServiceInterface {
    */
   signOut(revoke?: boolean): Observable<boolean> | Observable<any>;
 
-  /**
-   * Refresh auth sign in state object
-   *
-   */
-  refreshSignInState(authToken: string, provider?: string): Observable<boolean>;
+  /** refresh auth sign in state object */
+  refreshSignInState(
+    authToken: string,
+    provider?: string,
+    expiresAt?: number
+  ): Observable<boolean>;
 }
 
 /**  @internal */

@@ -19,5 +19,5 @@ export interface StrategyInterface {
   signOut(revoke?: boolean): Observable<boolean>;
 
   /** @description Refresh application user signin state */
-  refreshSignInState(authToken: string): Observable<boolean>;
+  refreshSignInState(authToken: string, expiresAt?: number): Observable<boolean>;
 }

@@ -172,7 +172,7 @@ export class AuthService
     );
   }
 
-  refreshSignInState(authToken: string, provider?: string) {
+  refreshSignInState(authToken: string, provider?: string, expiresAt?: number) {
     const _provider = (this._signInResult?.provider ?? provider) as string;
     if (typeof _provider !== "string") {
       return throwError(() => new Error(ERR_LOGIN_STRATEGY_NOT_FOUND));
@@ -181,11 +181,11 @@ export class AuthService
     if (typeof strategy === "undefined" || strategy === null) {
       return throwError(() => new Error(ERR_LOGIN_STRATEGY_NOT_FOUND));
     }
-    return strategy.refreshSignInState(authToken);
+    return strategy.refreshSignInState(authToken, expiresAt);
   }
 
   /**
-   * A method used to sign out the currently loggen in user.
+   * a method used to sign out the currently loggen in user.
    *
    * @param revoke Optional parameter to specify whether a hard sign out is to be performed
    * @returns A `Promise` that resolves if the operation is successful, rejects otherwise
