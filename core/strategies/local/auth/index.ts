@@ -5,5 +5,5 @@ export {
   Endpoints as RESTInterfaceType,
 } from "./types";
 
-// Exported auth provider
-export { createAuthProvider } from "./factory";
+// exported auth provider
+export { createAuthProvider, createTokenResult, createAuthUser } from "./factory";

@@ -1,11 +1,13 @@
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { finalize, map, mergeMap } from "rxjs/operators";
 import {
+  AuthUser,
   DoubleAuthSignInResultInterface,
   SignInOptionsType,
   SignInResult,
   SignInResultInterface,
   StrategyInterface,
+  TokenResult,
   UnAuthenticatedResultInterface,
 } from "../../../types";
 import { SIGNIN_RESULT_CACHE } from "./defaults";
@@ -69,8 +71,8 @@ export class LocalStrategy implements StrategyInterface {
     private signInHandler: SignInRequestHandler,
     private cache?: Storage,
     private driver: string = "default",
-    private authResultCallback?: AuthResultCallbackType,
-    private userResultCallback?: (result: SignInResultInterface) => void
+    private authResultCallback?: AuthResultCallbackType<TokenResult>,
+    private userResultCallback?: (result: AuthUser) => void
   ) {}
 
   initialize(autologin?: boolean): Observable<void> {
@@ -103,7 +105,7 @@ export class LocalStrategy implements StrategyInterface {
           this.userResultCallback.bind(this)(user);
         }
 
-        this._signInState$.next(user);
+        this._signInState$.next({authToken, ...user});
         if (this.cache) {
           this.cache.setItem(SIGNIN_RESULT_CACHE, JSON.stringify(user));
         }
@@ -122,7 +124,6 @@ export class LocalStrategy implements StrategyInterface {
       })
       .pipe(
         mergeMap((state: SignInResult) => {
-  
           if (is2fa(state)) {
             this._request2FaConsent$.next(state.auth2faToken);
             return of(true);
@@ -136,7 +137,7 @@ export class LocalStrategy implements StrategyInterface {
             return of(false);
           }
 
-          const _state = state as Partial<SignInResultInterface>;
+          const _state = state as TokenResult;
           const authToken = _state.authToken;
 
           if (typeof authToken === "undefined" || authToken === null) {
@@ -155,19 +156,21 @@ export class LocalStrategy implements StrategyInterface {
           }
 
           return this.userResolver.user(authToken).pipe(
-            map((user: SignInResultInterface) => {
+            map((user: AuthUser) => {
               // case strategy user provides a user result callback, we invoke
               // the user result callback with the resolved user
               if (this.userResultCallback) {
                 this.userResultCallback.bind(this)(user);
               }
 
+              const result: SignInResultInterface = { ..._state, ...user };
+
               if (_state) {
-                this._signInState$.next(user);
+                this._signInState$.next(result);
               }
 
               if (this.cache) {
-                this.cache.setItem(SIGNIN_RESULT_CACHE, JSON.stringify(user));
+                this.cache.setItem(SIGNIN_RESULT_CACHE, JSON.stringify(result));
               }
 
               return true;

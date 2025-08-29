@@ -1,25 +1,29 @@
 export type TokenResult = {
-  scopes?: string[];
-  expiresAt?: string;
   authToken: string;
+  idToken?: string;
+  scopes?: string[];
+  expiresAt?: number;
 };
 
-/** @description authentication driver sign in result instance type declaration */
-export type SignInResultInterface = TokenResult & {
+export type AuthUser = {
   provider: string;
   id: string | number;
+  email?: string;
   emails: string[];
   name: string;
   photoUrl?: string;
   firstName: string;
   lastName: string;
-  idToken: string;
+  gender?: string;
   authorizationCode?: string;
   response: any;
   phoneNumber?: string;
   address?: string;
   birthdate?: string;
 };
+
+/** @description authentication driver sign in result instance type declaration */
+export type SignInResultInterface = TokenResult & AuthUser;
 
 /** @description Authentication driver 2fa sign in result instance type declaration  */
 export interface DoubleAuthSignInResultInterface {

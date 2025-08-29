@@ -6,7 +6,8 @@ export {
   SignInResult,
   DoubleAuthSignInResultInterface,
   UnAuthenticatedResultInterface,
-  TokenResult
+  TokenResult,
+  AuthUser,
 } from "./signin";
 
 export {

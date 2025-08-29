@@ -1,5 +1,8 @@
 import { Observable } from "rxjs";
-import { SignInResult, SignInResultInterface } from "../../../../types";
+import {
+  AuthUser,
+  SignInResult,
+} from "../../../../types";
 
 export type AccessTokenType = {
   authToken?: string;
@@ -32,7 +35,7 @@ export type UserInterface = {
  */
 export type UserResolver = {
   /** sends request to authentication server to resolve signed in user */
-  user(token: string): Observable<SignInResultInterface>;
+  user(token: string): Observable<AuthUser>;
 
   /** revoke the signed in user token */
   revoke(revoke?: boolean): Observable<any>;

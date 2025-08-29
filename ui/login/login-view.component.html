@@ -10,26 +10,26 @@
           <span class="company-name">{{ company }}</span>
         </div>
         <div class="input-container">
-          <label class="sr-only">{{ 'login.username.label' | text}}</label>
+          <label class="sr-only">{{ 'auth.login.username.label' | text}}</label>
           <input [class.has-error]="!!formGroup.get('username')?.touched && formGroup.get('username')?.errors !== null"
-            aria-label="username" type="text" name="username" [placeholder]="'login.username.label' | text"
+            aria-label="username" type="text" name="username" [placeholder]="'auth.login.username.label' | text"
             formControlName="username" />
         </div>
         <div class="input-container">
-          <label class="sr-only">{{'login.password.label' | text}}</label>
+          <label class="sr-only">{{'auth.login.password.label' | text }}</label>
           <input password
             [class.has-error]="!!formGroup.get('password')?.touched && formGroup.get('password')?.errors !== null"
-            aria-label="password" [type]="'password'" name="password" [placeholder]="'login.password.label' | text"
+            aria-label="password" [type]="'password'" name="password" [placeholder]="'auth.login.password.label' | text"
             formControlName="password" />
           <app-password-toggle (stateChange)="passwordInputRef?.setTypeAttribute($event)"
             [state]="'password'"></app-password-toggle>
         </div>
         <clr-checkbox-wrapper *ngIf="remember">
-          <label>{{ 'login.remember.label'| text}}</label>
+          <label>{{ 'auth.login.remember.label'| text }}</label>
           <input aria-label="remember-me" type="checkbox" name="remember" clrCheckbox formControlName="remember" />
         </clr-checkbox-wrapper>
         <button title="sumit-button" type="submit" [disabled]="performingAction" class="submit-btn btn btn-primary">{{
-          'login.submit.text' | text}}</button>
+          'auth.login.submit' | text }}</button>
 
         <div class="links">
           <!-- Login Links -->

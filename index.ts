@@ -6,6 +6,8 @@ export {
   AuthServiceInterface,
   SignInResultInterface,
   DoubleAuthSignInResultInterface,
+  AuthUser,
+  TokenResult,
 } from "./types";
 
 /** Exported angular providers */

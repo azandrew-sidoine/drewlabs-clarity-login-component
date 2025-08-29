@@ -1,5 +1,5 @@
 import { LocalStrategy } from "./strategy";
-import { SignInResultInterface } from "../../../types";
+import { AuthUser, TokenResult } from "../../../types";
 import { SignInRequestHandler, UserResolver } from "./auth";
 
 /** @internal */
@@ -7,8 +7,8 @@ type ProvideLocalStorageType = {
   provider: UserResolver & SignInRequestHandler;
   storage?: Storage;
   driver?: string;
-  authResultCallback?: (result: Partial<SignInResultInterface>) => boolean;
-  userResultCallback?: (result: SignInResultInterface) => void;
+  authResultCallback?: (result: TokenResult) => boolean;
+  userResultCallback?: (result: AuthUser) => void;
 };
 
 /** @description factory function to create a local strategy instance */

@@ -68,10 +68,6 @@ export class LoginViewComponent {
   @Input() logo: string | null | undefined = "...";
   @Input() remember!: boolean;
 
-  /**
-   * Component object instance initializer
-   * @param builder
-   */
   constructor(private builder: FormBuilder) {}
 
   onFormSubmit(formGroup: FormGroup) {

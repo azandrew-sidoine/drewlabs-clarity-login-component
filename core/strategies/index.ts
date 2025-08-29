@@ -3,4 +3,6 @@ export {
   useLocalStrategy,
   AuthClientConfig,
   createAuthProvider,
+  createTokenResult,
+  createAuthUser
 } from "./local";

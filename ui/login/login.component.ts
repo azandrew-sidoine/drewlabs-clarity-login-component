@@ -37,19 +37,60 @@ import { UIMetadata } from "../type";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnDestroy {
-  // Properties definitions
   private destroy$ = new Subject<void>();
   public readonly router = this.injector.get(Router);
-  // private data: { [index: string]: any } = this.route.snapshot.data;
-  // View text declarations
 
-  // #region Component inputs
-  @Input() logo!: string | null | undefined;
-  @Input() company!: string | null | undefined;
-  @Input() description!: string | null | undefined;
-  @Input() name!: string | null | undefined;
-  @Input() remember!: boolean;
-  // #region Component inputs
+  // #region component inputs
+  private _logo = this.metadata?.logo;
+  @Input() set logo(value: string | undefined | null) {
+    if (value) {
+      this._logo = value;
+    }
+  }
+  get logo() {
+    return this._logo;
+  }
+
+  private _company = this.metadata?.company;
+  @Input() set company(value: string | undefined | null) {
+    if (value) {
+      this._company = value;
+    }
+  }
+  get company() {
+    return this._company;
+  }
+
+  private _description = this.metadata?.description;
+  @Input() set description(value: string | undefined | null) {
+    if (value) {
+      this._description = value;
+    }
+  }
+  get description() {
+    return this._description;
+  }
+
+  private _name = this.metadata?.name;
+  @Input() set name(value: string | undefined | null) {
+    if (value) {
+      this._name = value;
+    }
+  }
+  get name() {
+    return this._name;
+  }
+
+  private _remember = this.metadata?.remember ?? false;
+  @Input() set remember(value: boolean | undefined | null) {
+    if (typeof value !== "undefined" && value !== null) {
+      this._remember = value;
+    }
+  }
+  get remember(): boolean {
+    return this._remember;
+  }
+  // #region
 
   performingAction$ = (this.auth as AuthService)?.actionsState$.pipe(
     map((state) => {
@@ -69,24 +110,13 @@ export class LoginComponent implements OnDestroy {
   constructor(
     @Inject(AUTH_SERVICE) private auth: AuthServiceInterface,
     public readonly injector: Injector,
-    @Inject(AUTH_METADATA) @Optional() metadata?: UIMetadata | null
+    @Inject(AUTH_METADATA) @Optional() private metadata: UIMetadata | null
   ) {
-    // #region Set Login component properties
-    const m = metadata ?? ({} as UIMetadata);
-    const { dashboard, remember, logo, name, description, company } = m;
-    this.remember = remember ?? false;
-    this.logo = logo;
-    this.name = name;
-    this.description = description;
-    this.company = company;
-    // #endregion  Set Login component properties
-
     this.auth.signInState$
       .pipe(
         tap((state) => {
-          // TODO : CHECK IF USER HAS ABILITIES
           if (state) {
-            // TODO : NAVIGATE TO THE APPLICATION DASHBOARD
+            const { dashboard } = this.metadata ?? {};
             setTimeout(() => {
               if (typeof dashboard === "function" && dashboard !== null) {
                 return dashboard(this.injector, state);

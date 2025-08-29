@@ -11,7 +11,5 @@ export type AuthClientConfig = {
 };
 
 /** auth result callback type declaration */
-export type AuthResultCallbackType = (
-  result: Partial<SignInResultInterface>
-) => boolean;
+export type AuthResultCallbackType<T> = (result: T) => boolean;
 //#endregion Types
