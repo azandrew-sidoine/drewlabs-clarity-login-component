@@ -21,6 +21,7 @@ import { COMMON_PIPES } from "@azlabsjs/ngx-common";
 import { ClarityModule } from "@clr/angular";
 import { PasswordToggleComponent } from "./password-toggle";
 import { PasswordInputDirective } from "./password-input.directive";
+import { RouterLink } from "@angular/router";
 
 @Component({
   standalone: true,
@@ -32,7 +33,8 @@ import { PasswordInputDirective } from "./password-input.directive";
     ClarityModule,
     PasswordToggleComponent,
     PasswordInputDirective,
-  ],
+    RouterLink
+],
   selector: "app-login-view",
   templateUrl: "./login-view.component.html",
   styleUrls: ["./login-view.component.scss"],

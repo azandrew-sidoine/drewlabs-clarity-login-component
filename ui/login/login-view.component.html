@@ -3,7 +3,9 @@
     <form class="login" #loginForm="ngForm" [formGroup]="formGroup" (ngSubmit)="onFormSubmit(formGroup)">
       <div class="login-group">
         <div class="logo left" *ngIf="logo">
-          <img alt="application logo" [src]="logo" [alt]="company" />
+          <a routerLink="/" >
+            <img alt="application logo" [src]="logo" [alt]="company" />
+          </a>
         </div>
         <div class="title left" *ngIf="name">
           <span class="module">{{ name }}</span>
