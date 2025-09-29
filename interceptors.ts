@@ -7,18 +7,22 @@ import { ProviderToken, inject } from "@angular/core";
 import { AuthServiceInterface } from "./types";
 import { catchError, lastValueFrom, throwError } from "rxjs";
 
-/** @description Provides an angular HTTP interceptor that add `x-client-id` and `x-client-secret` headers to the ongoing login request */
+/** @description provides an angular HTTP interceptor that add `x-client-id` and `x-client-secret` headers to the ongoing login request */
 export function authClientInterceporFactory(
   id: string,
   secret?: string | null
 ) {
   return (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
+    if (req.url.indexOf('login') === -1) {
+      return next(req);
+    } 
+
     req = req.clone({
       headers: req.headers
         .set("x-client-id", id ?? "")
         .set("x-client-secret", secret ?? ""),
     });
-    // Retrourner la prochaine exécution de la pile des middlewares
+
     return next(req);
   };
 }
