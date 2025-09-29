@@ -54,10 +54,10 @@ export class AuthService
   public signInState$ = this._signInState$.asObservable();
 
   private initialized = false;
-  private _actionsState$ = new ReplaySubject<AuthActions>(AuthActions.COMPLETE);
+  private _actionsState$ = new ReplaySubject<AuthActions>(AuthActions.NOACTION);
 
   public actionsState$ = this._actionsState$.pipe(
-    startWith(AuthActions.ONGOING)
+    startWith(AuthActions.NOACTION)
   );
   private _destroy$ = new Subject<void>();
 
@@ -123,7 +123,7 @@ export class AuthService
       onError(error);
     } finally {
       this.initialized = true;
-      this._actionsState$.next(AuthActions.COMPLETE);
+      this._actionsState$.next(AuthActions.NOACTION);
     }
   }
 

@@ -6,6 +6,7 @@ import {
   Input,
   Injector,
   Optional,
+  HostBinding,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { map, tap } from "rxjs/operators";
@@ -32,11 +33,18 @@ import { UIMetadata } from "../type";
       [description]="description"
       [logo]="logo"
       [remember]="remember"
+      [theme]="theme"
+      [subname]="subname"
+      [appname]="appname"
+      [applogo]="applogo"
     ></app-login-view>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnDestroy {
+
+  @HostBinding('class.from-blue-50') blue50 = true;
+
   private destroy$ = new Subject<void>();
   public readonly router = this.injector.get(Router);
 
@@ -81,6 +89,46 @@ export class LoginComponent implements OnDestroy {
     return this._name;
   }
 
+  private _subname = this.metadata?.subname;
+  @Input() set subname(value: string | undefined | null) {
+    if (value) {
+      this._subname = value;
+    }
+  }
+  get subname() {
+    return this._subname;
+  }
+
+  private _theme = this.metadata?.theme;
+  @Input() set theme(value: string | undefined | null) {
+    if (value) {
+      this._theme = value;
+    }
+  }
+  get theme() {
+    return this._theme;
+  }
+
+  private _appname = this.metadata?.appname;
+  @Input() set appname(value: string | undefined | null) {
+    if (value) {
+      this._appname = value;
+    }
+  }
+  get appname() {
+    return this._appname;
+  }
+
+  private _applogo = this.metadata?.applogo;
+  @Input() set applogo(value: string | undefined | null) {
+    if (value) {
+      this._applogo = value;
+    }
+  }
+  get applogo() {
+    return this._applogo;
+  }
+
   private _remember = this.metadata?.remember ?? false;
   @Input() set remember(value: boolean | undefined | null) {
     if (typeof value !== "undefined" && value !== null) {
@@ -95,9 +143,10 @@ export class LoginComponent implements OnDestroy {
   performingAction$ = (this.auth as AuthService)?.actionsState$.pipe(
     map((state) => {
       switch (state) {
-        case AuthActions.COMPLETE:
+        case AuthActions.NOACTION:
         case AuthActions.FAILED:
           return false;
+        case AuthActions.COMPLETE:
         case AuthActions.ONGOING:
           return true;
         default:

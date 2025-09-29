@@ -3,18 +3,26 @@ import { SignInResultInterface } from "../types";
 
 /** @internal */
 export type UIMetadata = {
-  /** @description Application logo url or path */
+  /** Application logo url or path */
   logo?: string | null;
-  /** @description Login ui description message */
+  /** Login ui description message */
   description?: string | null;
-  /** @description Application company name */
+  /** Application company name */
   company?: string | null;
-  /** @description Application name */
+  /** application name */
   name?: string | null;
-
-  /** @description Boolean flag to enable remember me flag */
-  remember?: boolean;
-
-  /** @description dashboard ui resolver function. If value is a string, we simply call angular router.navigate()  */
+  /** dashboard ui resolver function. If value is a string, we simply call angular router.navigate()  */
   dashboard: string | ((i: Injector, state: SignInResultInterface) => void);
+
+
+  /** application subname or description */
+  subname?: string | null;
+  /** application theme */
+  theme?: string | null;
+  /** boolean flag to enable remember me flag */
+  remember?: boolean;
+  appname?: string | null;
+
+  /** application level logo */
+  applogo?: string | null;
 };

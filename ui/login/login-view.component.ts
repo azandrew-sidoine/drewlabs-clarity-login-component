@@ -19,9 +19,10 @@ import {
 } from "@angular/forms";
 import { COMMON_PIPES } from "@azlabsjs/ngx-common";
 import { ClarityModule } from "@clr/angular";
-import { PasswordToggleComponent } from "./password-toggle";
+// import { PasswordToggleComponent } from "./password-toggle";
 import { PasswordInputDirective } from "./password-input.directive";
 import { RouterLink } from "@angular/router";
+import { HEADER_DIRECTIVES } from "../../../directives/nav";
 
 @Component({
   standalone: true,
@@ -31,9 +32,10 @@ import { RouterLink } from "@angular/router";
     FormsModule,
     ReactiveFormsModule,
     ClarityModule,
-    PasswordToggleComponent,
-    PasswordInputDirective,
-    RouterLink
+    // PasswordToggleComponent,
+    // PasswordInputDirective,
+    RouterLink,
+    ...HEADER_DIRECTIVES
 ],
   selector: "app-login-view",
   templateUrl: "./login-view.component.html",
@@ -41,9 +43,9 @@ import { RouterLink } from "@angular/router";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginViewComponent {
-  // #region Component output
+  // #region component output
   @Output() formSubmitted = new EventEmitter<object>();
-  // #endregion Component output
+  // #endregion
 
   public formGroup: FormGroup = this.builder.group({
     username: this.builder.control(
@@ -64,15 +66,23 @@ export class LoginViewComponent {
   passwordInputRef!: PasswordInputDirective | null;
   @Input() performingAction: boolean = false;
   @Input() loggedIn: boolean = false;
+  @Input() remember!: boolean;
+
+
+  // metadata
+  @Input() theme: string|null|undefined;
   @Input() name: string | null | undefined;
+  @Input() subname: string|null|undefined;
+  @Input() appname: string|null|undefined;
+  @Input() applogo: string|null|undefined;
   @Input() company: string | null | undefined = "Company Name";
   @Input() description: string | null | undefined = "";
   @Input() logo: string | null | undefined = "...";
-  @Input() remember!: boolean;
 
   constructor(private builder: FormBuilder) {}
 
   onFormSubmit(formGroup: FormGroup) {
+    console.log('Form submitted...')
     // Mark componentFormGroup controls as touched
     this.validateFormGroupFields(formGroup);
     // Check if the formGroup is valid

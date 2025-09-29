@@ -1,44 +1,132 @@
-<div class="login-wrapper">
-  <div class="login-overlay" *ngIf="formGroup">
-    <form class="login" #loginForm="ngForm" [formGroup]="formGroup" (ngSubmit)="onFormSubmit(formGroup)">
-      <div class="login-group">
-        <div class="logo left" *ngIf="logo">
-          <a routerLink="/" >
-            <img alt="application logo" [src]="logo" [alt]="company" />
+<ngx-header
+  [home]="'/'"
+  [name]="appname"
+  [subname]="subname"
+  [class]="theme"
+  [logo]="applogo"
+>
+  <ng-template #actions let-actions>
+    <div class="custom-header-actions">
+      <div id="user-info" class="pt-2 pr-4">
+      </div>
+    </div>
+  </ng-template>
+</ngx-header>
+
+<div class="max-w-6xl mx-auto mt-10 bg-white rounded-2xl shadow-lg overflow-hidden">
+  <div class="grid md:grid-cols-2">
+    <div class="bg-gradient-to-br from-blue-500 to-blue-700 p-12 flex flex-col justify-center">
+      <div class="text-white">
+        <p cds-text class="text-xl text-center mb-4 text-custom-100">{{ name }}</p>
+        <div class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 p-2">
+          <a *ngIf="logo" routerLink="/" >
+            <img [attr.src]="logo" alt="AMU Logo" class="w-full h-full object-contain"/>
           </a>
         </div>
-        <div class="title left" *ngIf="name">
-          <span class="module">{{ name }}</span>
-          <span class="company-name">{{ company }}</span>
+        <div class="text-center px-2">
+        <h2 cds-text class="text-3xl font-bold">{{ description }}</h2>
         </div>
-        <div class="input-container">
-          <label class="sr-only">{{ 'auth.login.username.label' | text }}</label>
-          <input [class.has-error]="!!formGroup.get('username')?.touched && formGroup.get('username')?.errors !== null"
-            aria-label="username" type="text" name="username" [placeholder]="'auth.login.username.label' | text"
-            formControlName="username" />
+        <div class="mb-8 mt-6">
+          <div class="flex items-center space-y-4">
+            <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <span class="text-custom-100 space-x-3">Déclaration rapide et sécurisée</span>
+          </div>
+          <div class="flex items-center space-y-4">
+            <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <span class="space-x-3 text-custom-100">Paiement mobile intégré</span>
+          </div>
+          <div class="flex items-center space-y-4">
+            <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <span class="space-x-3 text-custom-100">Suivi en temps réel</span>
+          </div>
         </div>
-        <div class="input-container">
-          <label class="sr-only">{{'auth.login.password.label' | text }}</label>
-          <input password
-            [class.has-error]="!!formGroup.get('password')?.touched && formGroup.get('password')?.errors !== null"
-            aria-label="password" [type]="'password'" name="password" [placeholder]="'auth.login.password.label' | text"
-            formControlName="password" />
-          <app-password-toggle (stateChange)="passwordInputRef?.setTypeAttribute($event)"
-            [state]="'password'"></app-password-toggle>
-        </div>
-        <clr-checkbox-wrapper *ngIf="remember">
-          <label>{{ 'auth.login.remember.label'| text }}</label>
-          <input aria-label="remember-me" type="checkbox" name="remember" clrCheckbox formControlName="remember" />
-        </clr-checkbox-wrapper>
-        <button title="sumit-button" type="submit" [disabled]="performingAction" class="submit-btn btn btn-primary">{{ 'auth.login.submit' | text }}</button>
 
-        <div class="links">
-          <!-- Login Links -->
-        </div>
-        <div class="footer">
-          <div class="powered-by">Powered by LIKSOFT</div>
+        <!-- Conditions Section -->
+        <div class="bg-white bg-opacity-10 rounded-lg p-4">
+          <div class="flex items-center mb-3">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h4 cds-text class="space-x-2 text-l font-semibold text-white">
+              Conditions générales
+            </h4>
+          </div>
+          <button
+            onclick="showConditions()"
+            class="text-white-100 hover:text-white underline text-xs">
+            Lire les conditions d'ajout d'ayant droit supplémentaire
+          </button>
         </div>
       </div>
-    </form>
+    </div>
+
+    <!-- Right Column - Login Form -->
+    <div class="p-12">
+      <div class="max-w-md mx-auto">
+        <div class="text-center mb-8">
+          <div class="w-16 h-16 bg-white-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </div>
+          <h3 cds-text class="text-2xl font-bold text-gray-800 mb-2">Connexion</h3>
+          <p cds-text class="text-gray-600">Accédez à votre espace CNSS</p>
+        </div>
+
+        <form #loginForm="ngForm" [formGroup]="formGroup" (ngSubmit)="onFormSubmit(formGroup)">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'auth.login.username.label' | text }} *</label>
+            <input
+              type="email"
+              [class.has-error]="!!formGroup.get('username')?.touched && formGroup.get('username')?.errors !== null"
+              class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:outline-none"
+              name="username" [placeholder]="'auth.login.username.label' | text"
+              formControlName="username" 
+              required
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">{{'auth.login.password.label' | text }} *</label>
+            <input
+              type="password"
+              [class.has-error]="!!formGroup.get('password')?.touched && formGroup.get('password')?.errors !== null"
+              class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:outline-none"
+              name="password"
+              [placeholder]="'auth.login.password.label' | text"
+              formControlName="password"
+              required
+            />
+          </div>
+
+          <button [disabled]="performingAction" type="submit" class="space-y-6 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+            <div class="flex items-center justify-center" *ngIf="performingAction; else noAction">
+              <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              <span>Connexion...</span>
+            </div>
+            <ng-template #noAction>
+              <div class="flex items-center justify-center">
+                <svg class="w-5 h-5 space-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg> &nbsp;&nbsp;
+                <span>{{ 'auth.login.submit' | text }}</span>
+              </div>
+            </ng-template>
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
