@@ -82,10 +82,10 @@ export class LoginViewComponent {
   constructor(private builder: FormBuilder) {}
 
   onFormSubmit(formGroup: FormGroup) {
-    console.log('Form submitted...')
-    // Mark componentFormGroup controls as touched
+    // mark componentFormGroup controls as touched
     this.validateFormGroupFields(formGroup);
-    // Check if the formGroup is valid
+    
+    // check if the formGroup is valid
     if (formGroup.valid) {
       // Fire formSubmitted event with the formGroup value
       this.formSubmitted.emit(formGroup.getRawValue());
