@@ -7,7 +7,7 @@
     </div>
   </div>
 </div>
-<div class="max-w-xl mx-auto bg-white shadow-lg overflow-hidden">
+<div class="max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
   <div class="p-12">
     <div class="max-w-md mx-auto">
       <div class="text-center mb-8">
@@ -21,7 +21,7 @@
           <input
             type="email"
             [class.has-error]="!!formGroup.get('username')?.touched && formGroup.get('username')?.errors !== null"
-            class="w-full border-2 border-gray-300 rounded-sm px-3 py-2 focus:border-primary-700 focus-within:border-primary-700 focus:outline-none"
+            class="w-full border-2 border-gray-300 rounded-sm px-3 py-2 focus:border-primary-700 focus-within:border-primary-700 focus:outline-none rounded"
             name="username"
             [placeholder]="'auth.login.username.label' | text"
             formControlName="username"
@@ -35,7 +35,7 @@
             password
             type="password"
             [class.has-error]="!!formGroup.get('password')?.touched && formGroup.get('password')?.errors !== null"
-            class="w-full border-2 border-gray-300 px-3 py-2 focus:border-primary-700 focus-within:border-primary-700 focus:outline-none"
+            class="w-full border-2 border-gray-300 px-3 py-2 focus:border-primary-700 focus-within:border-primary-700 focus:outline-none rounded"
             name="password"
             [placeholder]="'auth.login.password.label' | text"
             formControlName="password"
@@ -44,7 +44,7 @@
           <app-password-toggle class="block absolute transform -translate-y-1/2 top-1/4 right-2" (stateChange)="passwordInputRef?.setTypeAttribute($event)" [state]="'password'"></app-password-toggle>
         </div>
 
-        <button [disabled]="performingAction" [class]="performingAction ? 'bg-primary-600' : 'bg-primary-800'" type="submit" class="space-y-6 w-full hover:bg-primary-900 text-white font-bold py-3 px-6 transition duration-300">
+        <button [disabled]="performingAction" [class]="performingAction ? 'bg-primary-600' : 'bg-primary-800'" type="submit" class="space-y-6 w-full hover:bg-primary-900 text-white font-bold py-3 px-6 transition duration-300 rounded-lg">
           <div class="flex items-center justify-center">
             <div *ngIf="performingAction; else noAction" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
             <ng-template #noAction>
