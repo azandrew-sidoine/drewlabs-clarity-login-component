@@ -3,6 +3,8 @@ import {
   IfAuthenticatedDirective,
   IfHasAnyScopeDirective,
   IfHasScopesDirective,
+  LogoutDirective,
+  UsernameDirective,
 } from "./directives";
 import { LoginComponent } from "./login";
 import { MetadataComponent } from "./metadata";
@@ -33,5 +35,7 @@ export const AUTH_DIRECTIVES = [
   AuthCallbackComponent,
   LoginComponent,
   MetadataComponent,
+  UsernameDirective,
+  LogoutDirective,
   OTPComponent,
 ] as const;
