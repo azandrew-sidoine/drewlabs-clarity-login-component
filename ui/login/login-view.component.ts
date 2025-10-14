@@ -19,10 +19,10 @@ import {
 } from "@angular/forms";
 import { COMMON_PIPES } from "@azlabsjs/ngx-common";
 import { ClarityModule } from "@clr/angular";
-// import { PasswordToggleComponent } from "./password-toggle";
 import { PasswordInputDirective } from "./password-input.directive";
 import { RouterLink } from "@angular/router";
 import { HEADER_DIRECTIVES } from "../../../directives/nav";
+import { PasswordToggleComponent } from "./password-toggle";
 
 @Component({
   standalone: true,
@@ -32,11 +32,11 @@ import { HEADER_DIRECTIVES } from "../../../directives/nav";
     FormsModule,
     ReactiveFormsModule,
     ClarityModule,
-    // PasswordToggleComponent,
-    // PasswordInputDirective,
+    PasswordToggleComponent,
+    PasswordInputDirective,
     RouterLink,
-    ...HEADER_DIRECTIVES
-],
+    ...HEADER_DIRECTIVES,
+  ],
   selector: "app-login-view",
   templateUrl: "./login-view.component.html",
   styleUrls: ["./login-view.component.scss"],
@@ -68,13 +68,12 @@ export class LoginViewComponent {
   @Input() loggedIn: boolean = false;
   @Input() remember!: boolean;
 
-
   // metadata
-  @Input() theme: string|null|undefined;
+  @Input() theme: string | null | undefined;
   @Input() name: string | null | undefined;
-  @Input() subname: string|null|undefined;
-  @Input() appname: string|null|undefined;
-  @Input() applogo: string|null|undefined;
+  @Input() subname: string | null | undefined;
+  @Input() appname: string | null | undefined;
+  @Input() applogo: string | null | undefined;
   @Input() company: string | null | undefined = "Company Name";
   @Input() description: string | null | undefined = "";
   @Input() logo: string | null | undefined = "...";
@@ -84,7 +83,7 @@ export class LoginViewComponent {
   onFormSubmit(formGroup: FormGroup) {
     // mark componentFormGroup controls as touched
     this.validateFormGroupFields(formGroup);
-    
+
     // check if the formGroup is valid
     if (formGroup.valid) {
       // Fire formSubmitted event with the formGroup value
