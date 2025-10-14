@@ -21,7 +21,6 @@ import { AuthServiceInterface } from "../../types";
 export class IfHasScopesDirective
   implements AfterViewInit, OnDestroy, OnChanges
 {
-  // #region Component inputs
   private _scopes!: string[];
   @Input() set ifHasAnyScope(value: string[]) {
     this._scopes = value ?? [];
@@ -29,12 +28,9 @@ export class IfHasScopesDirective
   get scopes() {
     return this._scopes;
   }
-  // #endregion Component inputs
 
-  // #region Component internal properties
   private _hasView: boolean = false;
-  private _subscriptions: Subscription[] = [];
-  // #endregion Component internal properties
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private template: TemplateRef<any>,
@@ -59,8 +55,8 @@ export class IfHasScopesDirective
    * Reset directive state
    */
   private resetState() {
-    cancelSubscriptions(this._subscriptions ?? []);
-    this._subscriptions = [];
+    cancelSubscriptions(this.subscriptions ?? []);
+    this.subscriptions = [];
   }
 
   /**
@@ -68,7 +64,7 @@ export class IfHasScopesDirective
    */
   private updateView() {
     const _scopes = this.scopes ?? [];
-    this._subscriptions.push(
+    this.subscriptions.push(
       this.auth.signInState$
         .pipe(
           map((state) => state?.scopes ?? []),
@@ -97,6 +93,6 @@ export class IfHasScopesDirective
 
   //
   ngOnDestroy(): void {
-    cancelSubscriptions(this._subscriptions);
+    cancelSubscriptions(this.subscriptions);
   }
 }

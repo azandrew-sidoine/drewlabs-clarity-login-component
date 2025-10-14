@@ -3,13 +3,9 @@
   [name]="appname"
   [subname]="subname"
   [class]="theme"
-  [logo]="applogo"
->
+  [logo]="applogo">
   <ng-template #actions let-actions>
-    <div class="custom-header-actions">
-      <div id="user-info" class="pt-2 pr-4">
-      </div>
-    </div>
+    <div class="custom-header-actions"></div>
   </ng-template>
 </ngx-header>
 
@@ -73,8 +69,8 @@
             <label class="sr-only block text-sm font-medium text-gray-700 mb-2">{{ "auth.login.username.label" | text }} *</label>
             <input
               type="email"
-              [class.has-error]="!!formGroup.get('username')?.touched && formGroup.get('username')?.errors !== null"
-              class="w-full border-2 border-gray-300 rounded-sm px-3 py-2 focus:border-primary-700 focus-within:border-primary-700 focus:outline-none rounded"
+              [class]="!!formGroup.get('username')?.touched && formGroup.get('username')?.errors !== null ? 'border-red-500' : 'border-gray-300'"
+              class="w-full border-2 rounded-sm px-3 py-2 focus:border-primary-700 focus-within:border-primary-700 focus:outline-none rounded"
               name="username"
               [placeholder]="'auth.login.username.label' | text"
               formControlName="username"
@@ -87,8 +83,8 @@
             <input
               password
               type="password"
-              [class.has-error]="!!formGroup.get('password')?.touched && formGroup.get('password')?.errors !== null"
-              class="w-full border-2 border-gray-300 px-3 py-2 focus:border-primary-700 focus-within:border-primary-700 focus:outline-none rounded"
+              [class]="!!formGroup.get('password')?.touched && formGroup.get('password')?.errors !== null ? 'border-red-500' : 'border-gray-300'"
+              class="w-full border-2 px-3 py-2 focus:border-primary-700 focus-within:border-primary-700 focus:outline-none rounded"
               name="password"
               [placeholder]="'auth.login.password.label' | text"
               formControlName="password"

@@ -159,10 +159,14 @@ export class AuthService
     this.handlers?.onPerformingAction();
     return strategy?.signIn(options).pipe(
       tap((state) => {
-        state
-          ? this.handlers?.onAuthenticaltionSuccessful()
-          : this.handlers?.onAuthenticationFailure();
-        this._actionsState$.next(AuthActions.COMPLETE);
+        if (state) {
+          this._actionsState$.next(AuthActions.COMPLETE);
+          this.handlers?.onAuthenticaltionSuccessful();
+          return;
+        }
+
+        this._actionsState$.next(AuthActions.FAILED);
+        this.handlers?.onAuthenticationFailure();
       }),
       catchError((err) => {
         this._actionsState$.next(AuthActions.FAILED);
