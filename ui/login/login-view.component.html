@@ -9,7 +9,7 @@
 </div>
 <div class="max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
   <div class="p-12">
-    <div class="max-w-md mx-auto">
+    <div class="max-w-md mx-auto space-y-6">
       <div class="text-center mb-8">
         <p cds-text class="text-center text-xl font-bold text-gray-800 mb-6">{{ name }}</p>
         <h2 cds-text class="text-xs text-gray-500">{{ description }}</h2>
@@ -44,13 +44,13 @@
           <app-password-toggle class="block absolute transform -translate-y-1/2 top-1/4 right-2" (stateChange)="passwordInputRef?.setTypeAttribute($event)" [state]="'password'"></app-password-toggle>
         </div>
 
-        <button [disabled]="performingAction" [class]="performingAction ? 'bg-primary-600' : 'bg-primary-800'" type="submit" class="space-y-6 w-full hover:bg-primary-900 text-white font-bold py-3 px-6 transition duration-300 rounded-lg">
+        <button [disabled]="performingAction" [class]="performingAction ? 'bg-primary-600' : 'bg-primary-800'" type="submit" class="w-full hover:bg-primary-900 text-white font-bold py-3 px-6 transition duration-300 rounded-lg">
           <div class="flex items-center justify-center">
             <div *ngIf="performingAction; else noAction" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
             <ng-template #noAction>
-                <div class="flex items-center justify-center">
+                <div class="flex items-center justify-center space-x-2">
                   <svg
-                    class="w-5 h-5 space-x-2"
+                    class="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24">
