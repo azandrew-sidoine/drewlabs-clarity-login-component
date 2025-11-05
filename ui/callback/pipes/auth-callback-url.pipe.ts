@@ -9,10 +9,9 @@ import { AUTH_SERVICE } from "../../../core";
   pure: true,
 })
 export class AuthCallbackUrlPipe implements PipeTransform {
-  // Pipe constructor
   constructor(@Inject(AUTH_SERVICE) private auth: AuthServiceInterface) {}
 
-  // Create an observable that resolve the auth callback url
+  // create an observable that resolve the auth callback url
   transform(url: string) {
     return this.auth.signInState$.pipe(
       filter((state) => typeof state !== "undefined" && state !== null),

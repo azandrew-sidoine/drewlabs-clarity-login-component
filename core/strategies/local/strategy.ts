@@ -60,7 +60,6 @@ function unauthenticated(
  * ```
  */
 export class LocalStrategy implements StrategyInterface {
-  // Properties definition
   private _signInState$ = new BehaviorSubject<SingInResultType>(null);
   signInState$ = this._signInState$.asObservable();
   private _request2FaConsent$ = new Subject<string>();
