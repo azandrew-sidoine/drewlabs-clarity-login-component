@@ -43,7 +43,7 @@ export class AuthCallbackComponent implements OnDestroy {
       .pipe(
         tap(async (state) => {
           let path = this.location.path(true);
-          const redirect = this.route.snapshot.data["redirect"] ?? "/";
+          const redirect = state.get('redirect') ?? this.route.snapshot.data["redirect"] ?? "/";
           const index = path.indexOf("?");
 
           if (index !== -1) {
@@ -58,7 +58,7 @@ export class AuthCallbackComponent implements OnDestroy {
                 JSON.stringify(authToken)
               );
               const extras = {
-                queryParams: { challenge },
+                queryParams: { challenge, redirect },
                 queryParamsHandling: "replace",
               } as NavigationExtras;
 
@@ -84,6 +84,10 @@ export class AuthCallbackComponent implements OnDestroy {
                 return this.router.navigateByUrl(`/`);
               }
 
+              // remove challenge key from the session storage
+              window.sessionStorage.removeItem(challenge);
+
+              // refresh the authentication signin state
               return this.refreshAuth(
                 JSON.parse(authToken),
                 () => {
