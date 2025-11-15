@@ -43,7 +43,7 @@ export class AuthCallbackComponent implements OnDestroy {
       .pipe(
         tap(async (state) => {
           let path = this.location.path(true);
-          const redirect = this.route.snapshot.data["redirect"] ?? "/";
+          const redirect = state.get('redirect') ?? this.route.snapshot.data["redirect"] ?? "/";
           const index = path.indexOf("?");
 
           if (index !== -1) {
@@ -58,7 +58,7 @@ export class AuthCallbackComponent implements OnDestroy {
                 JSON.stringify(authToken)
               );
               const extras = {
-                queryParams: { challenge },
+                queryParams: { challenge, redirect },
                 queryParamsHandling: "replace",
               } as NavigationExtras;
 
