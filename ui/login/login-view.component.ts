@@ -21,8 +21,8 @@ import { COMMON_PIPES } from "@azlabsjs/ngx-common";
 import { ClarityModule } from "@clr/angular";
 import { PasswordInputDirective } from "./password-input.directive";
 import { RouterLink } from "@angular/router";
-import { HEADER_DIRECTIVES } from "../../../directives/nav";
 import { PasswordToggleComponent } from "./password-toggle";
+import { HEADER_DIRECTIVES } from "../../../directives/nav";
 
 @Component({
   standalone: true,
