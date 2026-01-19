@@ -23,7 +23,7 @@ export class OTPDirective {
   // #region Directive outputs
 
   // TODO: Add regex to support only number as input
-  @HostListener("input", ["$event"]) handleInputEvent(e: InputEvent) {
+  @HostListener("input", ["$event"]) handleInputEvent(e: Event) {
     const target = e.target as HTMLInputElement | null;
     if (!target) {
       return;
