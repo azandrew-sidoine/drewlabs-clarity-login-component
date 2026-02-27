@@ -1,8 +1,11 @@
-import { Observable } from "rxjs";
-import { AuthStrategies } from "../constants/strategies";
-import { SignInResultInterface } from "./signin";
-import { StrategyInterface } from "./strategy";
-import { Injector } from "@angular/core";
+import { Observable } from 'rxjs';
+import { AuthStrategies } from '../constants/strategies';
+import { SignInResultInterface } from './signin';
+import { StrategyInterface } from './strategy';
+import { Injector } from '@angular/core';
+
+// @internal
+type Optional<T> = T | null | undefined;
 
 export interface AuthStrategiesContainer {
   /** @description Returns the strategy matching the user provided id or undefined if not found */
@@ -46,7 +49,7 @@ export interface AuthServiceInterface {
    */
   signIn(
     id: AuthStrategies,
-    options?: any
+    options?: any,
   ): Observable<boolean> | Observable<any>;
 
   /**
@@ -61,7 +64,7 @@ export interface AuthServiceInterface {
   refreshSignInState(
     authToken: string,
     provider?: string,
-    expiresAt?: number
+    expiresAt?: number,
   ): Observable<boolean>;
 }
 
@@ -74,9 +77,9 @@ export type ActionHandlersObjectType = {
   failure: Callback;
   error: Callback;
   logout?: (
-    injector: Injector,
-    provider?: string,
-    signInResult?: SignInResultInterface
+    injector: Optional<Injector>,
+    provider?: Optional<string>,
+    signInResult?: Optional<SignInResultInterface>,
   ) => void | false;
   performingAction?: Callback;
   loginPath?: string;
