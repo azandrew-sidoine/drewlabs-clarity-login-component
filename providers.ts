@@ -1,16 +1,16 @@
-import { Injector, Provider, inject } from "@angular/core";
-import { InjectionToken } from "@angular/core";
-import { ActionHandlersType, ProvideAuthServiceConfig } from "./types";
+import { Injector, Provider, inject } from '@angular/core';
+import { InjectionToken } from '@angular/core';
+import { ActionHandlersType, ProvideAuthServiceConfig } from './types';
 import {
   AUTH_ACTION_HANDLERS,
   AUTH_SERVICE_CONFIG,
   provideAuthActionHandlersFactory,
-} from "./core";
-import { Router } from "@angular/router";
+} from './core';
+import { Router } from '@angular/router';
 
 /** @description REDIRECT URL injection token */
 export const REDIRECT_URL = new InjectionToken<string>(
-  "REDIRECT URL injection token"
+  'REDIRECT URL injection token',
 );
 
 /** @description Provides a url to redirect guest user */
@@ -30,13 +30,13 @@ export function provideAuthConfig(p: ProvideAuthServiceConfig) {
 }
 
 /** @description Provides an authentication events handler instance */
-export function provideAuthEventsHandler(h: ActionHandlersType) {
+export function provideAuthEventsHandler(config: Partial<ActionHandlersType>) {
   return {
     provide: AUTH_ACTION_HANDLERS,
     useFactory: () => {
-      return provideAuthActionHandlersFactory(h)(
+      return provideAuthActionHandlersFactory(config)(
         inject(Injector),
-        inject(Router)
+        inject(Router),
       );
     },
   } as Provider;
