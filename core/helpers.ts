@@ -1,11 +1,14 @@
-import { first, timer } from "rxjs";
+import { first, timer } from 'rxjs';
 import {
   ActionHandlersType,
   RequiredProp,
   SignInResultInterface,
-} from "../types";
-import { Injector } from "@angular/core";
-import { Router } from "@angular/router";
+} from '../types';
+import { Injector } from '@angular/core';
+import { Router } from '@angular/router';
+
+// @internal
+const voidFn = () => {};
 
 /**
  * @description Get the host part of a given URL
@@ -16,9 +19,9 @@ export const host = (url: string) => {
   if (url) {
     const url_ = new URL(url);
     url = `${url_.protocol}//${url_.host}`;
-    return `${`${url.endsWith("/") ? url.slice(0, -1) : url}`}`;
+    return `${`${url.endsWith('/') ? url.slice(0, -1) : url}`}`;
   }
-  return url ?? "";
+  return url ?? '';
 };
 
 /**
@@ -34,7 +37,7 @@ export const host = (url: string) => {
  * @returns
  */
 export function tokenCan(
-  signInResult: RequiredProp<SignInResultInterface, "scopes">,
+  signInResult: RequiredProp<SignInResultInterface, 'scopes'>,
   ...scopes: string[]
 ) {
   // Case the list of scopes is not provided we simply return true
@@ -69,7 +72,7 @@ export function tokenCan(
  * @returns
  */
 export function tokenCanAny(
-  signInResult: RequiredProp<SignInResultInterface, "scopes">,
+  signInResult: RequiredProp<SignInResultInterface, 'scopes'>,
   ...scopes: string[]
 ) {
   // Case the list of scopes is not provided we simply return true
@@ -90,41 +93,42 @@ export function tokenCanAny(
   return result;
 }
 
-/** @description Provides a factory function for authentication action handlers */
-export function provideAuthActionHandlersFactory(handlers: ActionHandlersType) {
+/** @description provides a factory function for authentication action handlers */
+export function provideAuthActionHandlersFactory(
+  handlers: Partial<ActionHandlersType>,
+) {
   return (injector: Injector, router: Router) => {
     const _handlers =
-      typeof handlers === "function" && handlers !== null
+      typeof handlers === 'function' && handlers !== null
         ? handlers(injector)
         : handlers;
     const {
       success,
-      failure: fail,
+      failure,
       error,
       logout,
       performingAction,
       loginPath,
     } = _handlers;
     return {
-      onAuthenticationFailure: fail,
-      onAuthenticaltionSuccessful: success,
-      onPerformingAction: performingAction ?? (() => {}),
+      onAuthenticationFailure: failure ?? voidFn,
+      onAuthenticaltionSuccessful: success ?? voidFn,
+      onPerformingAction: performingAction ?? voidFn,
       onError:
         error ??
         ((err?: unknown) => {
-          console.error("Authentication request Error: ", err);
+          console.error('authentication request Error: ', err);
         }),
       onLogout: (...args: any[]) => {
-        const _logout = logout ?? (() => {});
-        // Case the logout function return false, as result we prevent view from navigating
-        // to login login path
+        const _logout = logout ?? voidFn;
+        // case the logout function return false, as result we prevent view from navigating to login login path
         const canLogout = _logout(injector, ...args) !== false;
         if (!canLogout) {
           return;
         }
         timer(300)
           .pipe(first())
-          .subscribe(() => router.navigate([loginPath ?? "login"]));
+          .subscribe(() => router.navigate([loginPath ?? 'login']));
       },
     };
   };
