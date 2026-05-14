@@ -18,8 +18,10 @@ import { Dialog, DIALOG } from "../../../directives/dialog";
 export class LogoutDirective {
 
   @HostListener("click") async onClick() { this.doLogout(); }
+
   @Input() prompt!: string;
   @Input() revoke: boolean = true;
+  
   @Output("performing-action") performingAction = new EventEmitter<boolean>();
 
   constructor(@Inject(AUTH_SERVICE) private auth: AuthServiceInterface, @Inject(DIALOG) private dialog: Dialog) { }
