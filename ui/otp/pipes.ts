@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({
   standalone: true,
-  name: "newArray",
+  name: "newarray",
   pure: true,
 })
 export class NewArrayPipe implements PipeTransform {

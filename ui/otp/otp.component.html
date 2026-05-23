@@ -1,4 +1,15 @@
-<ng-container *ngFor="let item of (size|newArray:''); let i=index">
-    <input [last]="size - 1" [class.has-error]="error" (valueChange)="handleValueChangeEvent(i, $event)" [value]="''"
-        [otp]="i" class="input" type="text" inputmode="numeric" maxlength="1" />
-</ng-container>
+<input
+  #input
+  *ngFor="let item of size | newarray : ''; let i = index"
+  [disabled]="disabled"
+  [last]="size - 1"
+  [class.has-error]="error"
+  (valueChange)="onValueChange(i, $event)"
+  [value]="''"
+  pattern="[a-zA-Z0-9]+"
+  [otp]="i"
+  class="input"
+  type="text"
+  inputmode="numeric"
+  maxlength="1"
+/>

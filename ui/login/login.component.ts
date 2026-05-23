@@ -21,9 +21,9 @@ import { UIMetadata } from "../type";
 @Component({
   standalone: true,
   imports: [CommonModule, LoginViewComponent],
-  selector: "app-login",
+  selector: "ngx-login",
   template: `
-    <app-login-view
+    <ngx-login-view
       [performingAction]="(performingAction$ | async) || false"
       (formSubmitted)="handleSubmit($event)"
       (loadRegistrationViewEvent)="router.navigateByUrl('/register')"
@@ -32,7 +32,7 @@ import { UIMetadata } from "../type";
       [description]="description"
       [logo]="logo"
       [remember]="remember"
-    ></app-login-view>
+    ></ngx-login-view>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

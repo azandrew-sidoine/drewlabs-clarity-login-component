@@ -35,7 +35,7 @@ import { RouterLink } from "@angular/router";
     PasswordInputDirective,
     RouterLink
 ],
-  selector: "app-login-view",
+  selector: "ngx-login-view",
   templateUrl: "./login-view.component.html",
   styleUrls: ["./login-view.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,

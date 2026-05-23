@@ -1,0 +1,1 @@
+export { PasswordForgot } from './password-forgot.component';
