@@ -27,13 +27,10 @@ export function createAuthProvider(
 export function createTokenResult(
   authToken: string,
   idToken: string,
+  scopes: string[],
   expiresAt?: number
 ) {
-  return {
-    authToken,
-    expiresAt,
-    idToken,
-  } as TokenResult;
+  return { authToken, expiresAt, idToken, scopes } as TokenResult;
 }
 
 export function createAuthUser(
@@ -46,7 +43,7 @@ export function createAuthUser(
   gender?: string,
   phone_number?: string,
   address?: string,
-  picture?: string
+  picture?: string,
 ) {
   return {
     id,

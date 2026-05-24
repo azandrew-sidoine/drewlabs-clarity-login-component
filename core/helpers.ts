@@ -71,11 +71,8 @@ export function tokenCan(
  * @param scopes
  * @returns
  */
-export function tokenCanAny(
-  signInResult: RequiredProp<SignInResultInterface, 'scopes'>,
-  ...scopes: string[]
-) {
-  // Case the list of scopes is not provided we simply return true
+export function tokenCanAny(signInResult: RequiredProp<SignInResultInterface, 'scopes'>,...scopes: string[]) {
+  // case the list of scopes is not provided we simply return true
   if (scopes.length === 0) {
     return true;
   }
