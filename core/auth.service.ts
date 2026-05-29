@@ -26,6 +26,7 @@ import {
 } from "../types";
 import { catchError, startWith, takeUntil, tap } from "rxjs/operators";
 import { AUTH_ACTION_HANDLERS, AUTH_SERVICE_CONFIG } from "./tokens";
+import { HttpErrorResponse } from "@angular/common/http";
 
 const isPromise = (p: any) => {
   return typeof p === "object" && typeof p.then === "function" ? true : false;
@@ -38,8 +39,7 @@ const asObservable = (state: any) =>
   providedIn: "root",
 })
 export class AuthService
-  implements AuthServiceInterface, AuthStrategiesContainer, OnDestroy
-{
+  implements AuthServiceInterface, AuthStrategiesContainer, OnDestroy {
   // Properties definitions
   private strategies = new Map<string, StrategyInterface>();
   private autologin = false;
@@ -77,8 +77,8 @@ export class AuthService
   ) {
     config instanceof Promise
       ? config.then((config) => {
-          this.initialize(config);
-        })
+        this.initialize(config);
+      })
       : this.initialize(config);
   }
 
@@ -159,14 +159,17 @@ export class AuthService
     this.handlers?.onPerformingAction();
     return strategy?.signIn(options).pipe(
       tap((state) => {
-        state
-          ? this.handlers?.onAuthenticaltionSuccessful()
-          : this.handlers?.onAuthenticationFailure();
+        state ? this.handlers?.onAuthenticaltionSuccessful() : this.handlers?.onAuthenticationFailure();
         this._actionsState$.next(AuthActions.COMPLETE);
       }),
       catchError((err) => {
-        this._actionsState$.next(AuthActions.FAILED);
-        this.handlers?.onError();
+        if (err instanceof HttpErrorResponse && (err.status === 400 || err.status === 422)) {
+          this._actionsState$.next(AuthActions.COMPLETE);
+          this.handlers?.onAuthenticationFailure();
+        } else {
+          this._actionsState$.next(AuthActions.FAILED);
+          this.handlers?.onError();
+        }
         return throwError(() => err);
       })
     );
