@@ -146,9 +146,7 @@ export function tokenCanAnyActivate(
       auth.signInState$.pipe(
         map((state) => state?.scopes ?? []),
         map((scopes) => {
-          const _scopes = route?.data
-            ? route?.data["authorizations"] ?? route?.data["scopes"]
-            : [];
+          const _scopes = route?.data ? ('authorizations' in route.data ? route?.data["authorizations"] : ('scopes' in route.data ? route?.data["scopes"] : [])) : [];
           return matchAny(scopes, _scopes);
         }),
         map((result) =>
@@ -179,9 +177,7 @@ export function tokenCanActivate(
       auth.signInState$.pipe(
         map((state) => state?.scopes ?? []),
         map((scopes) => {
-          const _scopes = route?.data
-            ? route?.data["authorizations"] ?? route?.data["scopes"]
-            : [];
+          const _scopes = route?.data ? ('authorizations' in route.data ? route?.data["authorizations"] : ('scopes' in route.data ? route?.data["scopes"] : [])) : [];
           return match(scopes, _scopes);
         }),
         map((result) =>
@@ -212,9 +208,7 @@ export function tokenCanAnyMatch(route: Route, segments: UrlSegment[]) {
       auth.signInState$.pipe(
         map((state) => {
           const { scopes, authToken } = state ?? {};
-          const _scopes = route?.data
-            ? route?.data["authorizations"] ?? route?.data["scopes"]
-            : [];
+          const _scopes = route?.data ? ('authorizations' in route.data ? route?.data["authorizations"] : ('scopes' in route.data ? route?.data["scopes"] : [])) : [];
           return (
             typeof authToken !== "undefined" &&
             authToken !== null &&
@@ -249,9 +243,7 @@ export function tokenCanMatch(route: Route, segments: UrlSegment[]) {
       auth.signInState$.pipe(
         map((state) => {
           const { scopes, authToken } = state ?? {};
-          const _scopes = route?.data
-            ? route?.data["authorizations"] ?? route?.data["scopes"]
-            : [];
+          const _scopes = route?.data ? ('authorizations' in route.data ? route?.data["authorizations"] : ('scopes' in route.data ? route?.data["scopes"] : [])) : [];
           return (
             typeof authToken !== "undefined" &&
             authToken !== null &&
