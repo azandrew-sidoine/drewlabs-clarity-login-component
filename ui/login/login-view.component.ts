@@ -41,9 +41,7 @@ import { RouterLink } from "@angular/router";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginViewComponent {
-  // #region Component output
   @Output() formSubmitted = new EventEmitter<object>();
-  // #endregion Component output
 
   public formGroup: FormGroup = this.builder.group({
     username: this.builder.control(
@@ -60,8 +58,7 @@ export class LoginViewComponent {
   });
 
   @ViewChild("loginForm") loginForm!: NgForm;
-  @ViewChild(PasswordInputDirective, { static: false })
-  passwordInputRef!: PasswordInputDirective | null;
+  @ViewChild(PasswordInputDirective, { static: false }) passwordInputRef!: PasswordInputDirective | null;
   @Input() performingAction: boolean = false;
   @Input() loggedIn: boolean = false;
   @Input() name: string | null | undefined;
@@ -69,6 +66,7 @@ export class LoginViewComponent {
   @Input() description: string | null | undefined = "";
   @Input() logo: string | null | undefined = "...";
   @Input() remember!: boolean;
+  @Input('can-reset-password') canresetpassword: boolean = true; 
 
   constructor(private builder: FormBuilder) {}
 

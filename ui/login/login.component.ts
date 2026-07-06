@@ -17,6 +17,7 @@ import { LoginViewComponent } from "./login-view.component";
 import { CommonModule } from "@angular/common";
 import { AUTH_METADATA } from "../providers";
 import { UIMetadata } from "../type";
+import { PASSWORD_RESET, PasswordResetProvider } from "../password-forgot";
 
 @Component({
   standalone: true,
@@ -32,6 +33,7 @@ import { UIMetadata } from "../type";
       [description]="description"
       [logo]="logo"
       [remember]="remember"
+      [can-reset-password]="!!passwords"
     ></ngx-login-view>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,7 +42,6 @@ export class LoginComponent implements OnDestroy {
   private destroy$ = new Subject<void>();
   public readonly router = this.injector.get(Router);
 
-  // #region component inputs
   private _logo = this.metadata?.logo;
   @Input() set logo(value: string | undefined | null) {
     if (value) {
@@ -90,7 +91,6 @@ export class LoginComponent implements OnDestroy {
   get remember(): boolean {
     return this._remember;
   }
-  // #region
 
   performingAction$ = (this.auth as AuthService)?.actionsState$.pipe(
     map((state) => {
@@ -106,11 +106,12 @@ export class LoginComponent implements OnDestroy {
     })
   );
 
-  // Class constructor
+
   constructor(
     @Inject(AUTH_SERVICE) private auth: AuthServiceInterface,
     public readonly injector: Injector,
-    @Inject(AUTH_METADATA) @Optional() private metadata: UIMetadata | null
+    @Inject(AUTH_METADATA) @Optional() private metadata: UIMetadata | null,
+    @Optional() @Inject(PASSWORD_RESET) public readonly passwords: PasswordResetProvider | null,
   ) {
     this.auth.signInState$
       .pipe(

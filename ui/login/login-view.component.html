@@ -43,11 +43,14 @@
           />
           <app-password-toggle class="block absolute transform -translate-y-1/2 top-1/4 right-2" (stateChange)="passwordInputRef?.setTypeAttribute($event)" [state]="'password'"></app-password-toggle>
 
-          <section class="mt-1">
-            <p cds-text class="opacity-80">
-              <a [routerLink]="'/auth/reset-password'"><span class="hover:text-primary-800 text-primary-600 underline">Mot de passe oublié ?</span></a>
-            </p>
-          </section>
+          @if (canresetpassword) {
+            <section class="mt-1">
+              <p cds-text class="opacity-80">
+                <a [routerLink]="'/auth/reset-password'"><span class="hover:text-primary-800 text-primary-600 underline">Mot de passe oublié ?</span></a>
+              </p>
+            </section>
+          }
+
         </div>
 
         <button [disabled]="performingAction" [class]="performingAction ? 'bg-primary-600' : 'bg-primary-800'" type="submit" class="w-full hover:bg-primary-900 text-white font-bold py-3 px-6 transition duration-300 rounded-lg">
@@ -74,7 +77,7 @@
 
         <div class="mt-3 text-center">
         <p cds-text class="opacity-80">
-            <button [routerLink]="'/auth/login'"><span class="hover:text-primary-900 text-primary-800 hover:underline">Vous disposez d'un compte ? se connecter</span></button>
+            <button [routerLink]="'/auth/register'"><span class="hover:text-primary-900 text-primary-800 hover:underline">Vous n'avez pas de compte ? Créez un compte</span></button>
         </p>
         </div>
         <div class="text-center mt-4 text-xs text-gray-600">Powered by LIKSOFT</div>

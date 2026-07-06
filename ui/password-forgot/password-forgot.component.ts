@@ -4,9 +4,12 @@ import { FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angu
 import { RouterModule } from "@angular/router";
 import { UIMetadata } from "../type";
 import { AUTH_METADATA } from "../providers";
-import { Optional, SignalType } from "./types";
+import { PasswordResetError, Optional, PASSWORD_RESET, PasswordResetProvider, SignalType } from "./types";
 import { COMMON_PIPES } from "@azlabsjs/ngx-common";
 import { OTPComponent } from "../otp";
+import { lastValueFrom } from "rxjs";
+import { DOCUMENT_LOCAL_STORAGE } from "@azlabsjs/ngx-storage";
+import { UI_EVENTS_CONTROLLER, UIEventsControllerType } from "../../../directives/ui-events";
 
 @Component({
     standalone: true,
@@ -17,7 +20,6 @@ import { OTPComponent } from "../otp";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PasswordForgot {
-
     private _logo: Optional<string>;
     @Input() set logo(value: string | undefined | null) {
         if (value) {
@@ -26,26 +28,6 @@ export class PasswordForgot {
     }
     get logo() {
         return this._logo;
-    }
-
-    private _description: Optional<string>;
-    @Input() set description(value: string | undefined | null) {
-        if (value) {
-            this._description = value;
-        }
-    }
-    get description() {
-        return this._description;
-    }
-
-    private _name: Optional<string>;
-    @Input() set name(value: string | undefined | null) {
-        if (value) {
-            this._name = value;
-        }
-    }
-    get name() {
-        return this._name;
     }
 
     private _size = 6;
@@ -68,22 +50,28 @@ export class PasswordForgot {
         return this._minlength;
     }
 
-
-    protected username = new FormControl(null, Validators.compose([Validators.required]));
+    protected username = new FormControl<string>('', Validators.compose([Validators.required]));
     protected password = new FormControl(null, Validators.compose([Validators.required, Validators.minLength(this._minlength)]));
     protected passwordConfirmation = new FormControl(null, Validators.compose([Validators.required, Validators.minLength(this._minlength)]));
+    protected signal = createSignal<SignalType>({ performingAction: false, requestedPasswordReset: false, completed: false, user: null, otp: { value: null, valid: true, verified: false } });
 
-    protected signal = createSignal<SignalType>({ performingAction: false, requestedPasswordReset: false, completed: false, otp: { value: null, valid: true, verified: false } });
-
-    constructor(@Inject(AUTH_METADATA) @NgOptional() metadata: UIMetadata | null) {
+    constructor(
+        @NgOptional() @Inject(DOCUMENT_LOCAL_STORAGE) private storage: Storage,
+        @NgOptional() @Inject(PASSWORD_RESET) private passwords: PasswordResetProvider,
+        @NgOptional() @Inject(UI_EVENTS_CONTROLLER) private controller: UIEventsControllerType,
+        @NgOptional() @Inject(AUTH_METADATA) metadata: UIMetadata | null) {
         if (metadata) {
-            this._name = metadata.name;
             this._logo = metadata.logo;
-            this._description = metadata.description;
         }
     }
 
-    requestPasswordReset() {
+    showOtpView() {
+        this.password.reset();
+        this.passwordConfirmation.reset();
+        this.signal.update(state => ({ ...state, otp: { ...state.otp, verified: false, value: null } }));
+    }
+
+    protected async requestOTP() {
         this.username.markAllAsTouched();
         this.username.markAsDirty();
         this.username.updateValueAndValidity();
@@ -93,35 +81,47 @@ export class PasswordForgot {
             return;
         }
 
-        this.signal.update(state => ({ ...state, performingAction: true }));
+        if (!this.username.value) {
+            console.error(`username input value is null.`);
+            return;
+        }
 
-        console.log('requesting password reset...');
-        setTimeout(() => {
-            console.log('request password reset completed!');
-            this.signal.update((state) => ({ ...state, performingAction: false, requestedPasswordReset: true }));
-        }, 3000);
+        try {
+            this.signal.update(state => ({ ...state, performingAction: true, user: this.username.value }));
+            const result = await lastValueFrom(this.passwords.requestOTP(this.username.value));
+            if (result) {
+                this.signal.update((state) => ({ ...state, performingAction: false, requestedPasswordReset: true }));
+            }
+
+        } catch (error) {
+            console.error(`error performing request, ${error}`);
+            if (error instanceof PasswordResetError) {
+                this.controller.endAction(error.message, 'bad-request');
+            }
+
+            this.signal.update((state) => ({ ...state, performingAction: false }));
+        }
     }
 
     protected handleOTPChange(e: unknown) {
         if (e && typeof e === 'string' && String(e).length === 6) {
-            this.signal.update((value) => ({
-                ...value,
-                otp: { ...value.otp, value: String(e) },
-            }));
+            this.signal.update((value) => ({ ...value, otp: { ...value.otp, value: String(e) } }));
         }
     }
 
     protected validateOTP(value: Optional<string>) {
         this.signal.update(state => ({ ...state, performingAction: true }));
-
-        console.log('validating otp...');
         setTimeout(() => {
-            console.log('otp validated successfully!');
-            this.signal.update((state) => ({ ...state, performingAction: false, otp: { ...state.otp, valid: true, verified: true } }));
-        }, 3000);
+            this.signal.update((state) => ({ ...state, performingAction: false, otp: { ...state.otp, valid: true, verified: true, value } }));
+        }, 1000);
     }
 
-    resetPassword() {
+    protected async resetPassword(user: Optional<string>, authCode: string) {
+        if (!user) {
+            console.error(`error resetting password, user is null`);
+            return;
+        }
+
         this.password.markAllAsTouched();
         this.password.markAsDirty();
         this.password.updateValueAndValidity();
@@ -140,17 +140,34 @@ export class PasswordForgot {
             return;
         }
 
-        if (this.password.value !== this.passwordConfirmation.value) {
-            // TODO: show error message
+        if (!this.password.value) {
             return;
         }
 
-        this.signal.update(state => ({ ...state, performingAction: true }));
-        console.log('resetting password please wait...');
-        setTimeout(() => {
-            console.log('password reset completed successfully!');
-            this.signal.update((state) => ({ ...state, performingAction: false, completed: true }));
-        }, 3000);
+        if (!this.passwordConfirmation.value) {
+            return;
+        }
+
+        if (this.password.value !== this.passwordConfirmation.value) {
+            this.password.setErrors({ ...(this.password.errors ?? {}), match: { input: 'password_confirmation' } });
+            this.passwordConfirmation.setErrors({ ...(this.passwordConfirmation.errors ?? {}), match: { input: 'password' } });
+            return;
+        }
+
+        try {
+            this.signal.update(state => ({ ...state, performingAction: true }));
+            const result = await lastValueFrom(this.passwords.resetPassword(user, this.password.value, authCode));
+            if (result) {
+                this.signal.update((state) => ({ ...state, performingAction: false, completed: true }));
+            }
+
+        } catch (error) {
+            console.error(`error performing request, ${error}`);
+            if (error instanceof PasswordResetError) {
+                this.controller.endAction(error.message, 'bad-request');
+            }
+            this.signal.update((state) => ({ ...state, performingAction: false }));
+        }
     }
 
 }
