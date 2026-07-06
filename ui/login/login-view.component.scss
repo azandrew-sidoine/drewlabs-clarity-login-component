@@ -1,0 +1,17 @@
+.decoration-none {
+    text-decoration: none;
+}
+
+.hover\:underline:hover {
+    text-decoration: underline;
+}
+
+.text-\[11px\],
+.text-11px {
+    font-size: 11px;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: .8;
+}

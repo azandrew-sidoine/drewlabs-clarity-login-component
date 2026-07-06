@@ -1,6 +1,7 @@
 import { Routes } from "@angular/router";
 import { LoginComponent } from "./login/login.component";
 import { AuthCallbackComponent } from "./callback";
+import { PasswordForgot } from "./password-forgot";
 
 /** routes definition for login module */
 export function createRoutes(redirect: string) {
@@ -8,6 +9,10 @@ export function createRoutes(redirect: string) {
     {
       path: "login",
       component: LoginComponent,
+    },
+    {
+      path: "reset-password",
+      component: PasswordForgot,
     },
     {
       path: "callback",
