@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, Inject, Input, Optional as NgOptional, signal as createSignal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Inject, Input, Optional as NgOptional, signal as createSignal, effect } from "@angular/core";
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UIMetadata } from "../type";
@@ -7,7 +7,7 @@ import { AUTH_METADATA } from "../providers";
 import { PasswordResetError, Optional, PASSWORD_RESET, PasswordResetProvider, SignalType } from "./types";
 import { COMMON_PIPES } from "@azlabsjs/ngx-common";
 import { OTPComponent } from "../otp";
-import { lastValueFrom } from "rxjs";
+import { lastValueFrom, Subject } from "rxjs";
 import { DOCUMENT_LOCAL_STORAGE } from "@azlabsjs/ngx-storage";
 import { UI_EVENTS_CONTROLLER, UIEventsControllerType } from "../../../directives/ui-events";
 
@@ -46,14 +46,22 @@ export class PasswordForgot {
             this._minlength = value;
         }
     }
-    get minlength() {
-        return this._minlength;
+
+    private _maxtries = 2;
+    @Input() set maxtries(value: Optional<number>) {
+        if (value) {
+            this._maxtries = value;
+        }
     }
 
     protected username = new FormControl<string>('', Validators.compose([Validators.required]));
     protected password = new FormControl(null, Validators.compose([Validators.required, Validators.minLength(this._minlength)]));
     protected passwordConfirmation = new FormControl(null, Validators.compose([Validators.required, Validators.minLength(this._minlength)]));
-    protected signal = createSignal<SignalType>({ performingAction: false, requestedPasswordReset: false, completed: false, user: null, otp: { value: null, valid: true, verified: false } });
+    protected signal = createSignal<SignalType>({ performingAction: false, requestedPasswordReset: false, completed: false, user: null, otp: { value: null, valid: true, verified: false }, lock: { expiresAt: null, tries: 0 } });
+    protected timerSignal = createSignal<{ minutes: string, seconds: string }>({ minutes: '00', seconds: '00' });
+
+    private counter = new Subject<Date>();
+    private timerInterval: ReturnType<typeof setInterval> | undefined = undefined;
 
     constructor(
         @NgOptional() @Inject(DOCUMENT_LOCAL_STORAGE) private storage: Storage,
@@ -63,6 +71,35 @@ export class PasswordForgot {
         if (metadata) {
             this._logo = metadata.logo;
         }
+
+        effect(() => {
+            const { lock: {expiresAt, tries}, user } = this.signal();
+
+            if (user && !expiresAt && tries ===0) {
+                this.storage.removeItem(`${user}_lock`);
+            } 
+        });
+
+
+        this.counter.subscribe(value => {
+            clearInterval(this.timerInterval);
+            this.timerSignal.update(() => ({ minutes: '00', seconds: '00' }));
+            if (value) {
+                this.timerInterval = setInterval(() => {
+                    const seconds = Math.abs(value.getTime() - new Date().getTime()) / 1000;
+                    const dm = Math.floor(seconds / 60);
+                    const ds = parseInt(String(seconds % 60));
+
+                    if (dm === 0 && ds === 0) {
+                        clearInterval(this.timerInterval);
+                        this.signal.update(state => ({ ...state, lock: { ...state.lock, expiresAt: null, tries: 0 } }));
+                        this.timerSignal.update(() => ({ minutes: '00', seconds: '00' }));
+                    }
+
+                    this.timerSignal.update(state => ({ ...state, minutes: String(dm).padStart(2, '0'), seconds: String(ds).padStart(2, '0') }));
+                }, 1000);
+            }
+        });
     }
 
     showOtpView() {
@@ -86,8 +123,58 @@ export class PasswordForgot {
             return;
         }
 
+
+        const cachedLock = this.storage.getItem(`${this.username.value}_lock`);
+        let { lock: { tries, expiresAt }, requestedPasswordReset } = this.signal();
+        if (cachedLock) {
+            const cachedLockValue = JSON.parse(cachedLock);
+            if (cachedLockValue && typeof cachedLockValue === 'object' && 'tries' in cachedLockValue && 'expiresAt' in cachedLockValue) {
+                tries = cachedLockValue.tries as number;
+                expiresAt = cachedLockValue.expiresAt ? new Date(cachedLockValue.expiresAt) : null;
+
+                // when we load expiresAt from storage and it value is not null, we notify the counter
+                if (expiresAt) {
+                    this.counter.next(expiresAt);
+                }
+            }
+        }
+        tries += 1;
+
+
         try {
-            this.signal.update(state => ({ ...state, performingAction: true, user: this.username.value }));
+
+            // case lock is enabled we simulate a navigation to otp view case user is not on the otp view
+            if ((tries > this._maxtries) || (expiresAt && expiresAt.getTime() - new Date().getTime() > 0)) {
+                
+                if (!requestedPasswordReset) {
+                    this.signal.update(state => ({ ...state, performingAction: true, user: state.user ?? this.username.value, lock: { ...state.lock, tries, expiresAt } }));
+                    setTimeout(() => {
+                        this.signal.update((state) => ({ ...state, performingAction: false, requestedPasswordReset: true }));
+                    }, 1000);
+                }
+
+                return;
+            }
+
+
+            this.signal.update(state => {
+                // we set the expiresAt value whenever tries is greater than or equals to max tries
+                if (tries >= this._maxtries && (typeof expiresAt === 'undefined' || expiresAt === null)) {
+                    const currentdate = new Date();
+                    currentdate.setHours(currentdate.getHours() + 1);
+                    expiresAt = currentdate;
+                    this.counter.next(expiresAt);
+                }
+
+                // compute lock value based on expiresAt and tries
+                const lock = { ...state.lock, expiresAt, tries: Math.min(tries, this._maxtries) };
+
+                // save the lock state into local storage in order to load it on the next otp request
+                this.storage.setItem(`${this.username.value}_lock`, JSON.stringify({ tries: lock.tries, expiresAt: lock.expiresAt ? lock.expiresAt.getTime() : null }));
+
+                return { ...state, performingAction: true, user: this.username.value, lock };
+            });
+
             const result = await lastValueFrom(this.passwords.requestOTP(this.username.value));
             if (result) {
                 this.signal.update((state) => ({ ...state, performingAction: false, requestedPasswordReset: true }));

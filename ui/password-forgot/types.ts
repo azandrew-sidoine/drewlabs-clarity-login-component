@@ -16,6 +16,10 @@ export type SignalType = {
     performingAction: boolean, 
     requestedPasswordReset: boolean,
     completed: boolean,
+    lock: {
+        expiresAt?: Date | null,
+        tries: number
+    },
     user: Optional<string>,
     otp: {
         value?: string | null;
