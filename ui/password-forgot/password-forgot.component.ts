@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, Inject, Input, Optional as NgOptional, signal as createSignal, effect } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Inject, Input, Optional as NgOptional, ViewChild, signal as createSignal, effect } from "@angular/core";
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UIMetadata } from "../type";
@@ -10,10 +10,12 @@ import { OTPComponent } from "../otp";
 import { lastValueFrom, Subject } from "rxjs";
 import { DOCUMENT_LOCAL_STORAGE } from "@azlabsjs/ngx-storage";
 import { UI_EVENTS_CONTROLLER, UIEventsControllerType } from "../../../directives/ui-events";
+import { PasswordInputDirective } from "../login/password-input.directive";
+import { PasswordToggleComponent } from "../login/password-toggle";
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, OTPComponent, ...COMMON_PIPES],
+    imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, OTPComponent, ...COMMON_PIPES, PasswordToggleComponent, PasswordInputDirective],
     selector: 'ngx-login-password-forgot',
     templateUrl: './password-forgot.component.html',
     styleUrls: ['./password-forgot.component.scss'],
@@ -47,12 +49,20 @@ export class PasswordForgot {
         }
     }
 
+    get minlength() {
+        return this._minlength;
+    }
+
     private _maxtries = 2;
     @Input() set maxtries(value: Optional<number>) {
         if (value) {
             this._maxtries = value;
         }
     }
+
+
+    @ViewChild('passwordref', { static: false, read: PasswordInputDirective }) passwordinput!: PasswordInputDirective | null;
+    @ViewChild('passwordconfirmationref', { static: false, read: PasswordInputDirective }) passwordconfirmationinput!: PasswordInputDirective | null;
 
     protected username = new FormControl<string>('', Validators.compose([Validators.required]));
     protected password = new FormControl(null, Validators.compose([Validators.required, Validators.minLength(this._minlength)]));
@@ -73,11 +83,11 @@ export class PasswordForgot {
         }
 
         effect(() => {
-            const { lock: {expiresAt, tries}, user } = this.signal();
+            const { lock: { expiresAt, tries }, user } = this.signal();
 
-            if (user && !expiresAt && tries ===0) {
+            if (user && !expiresAt && tries === 0) {
                 this.storage.removeItem(`${user}_lock`);
-            } 
+            }
         });
 
 
@@ -108,6 +118,13 @@ export class PasswordForgot {
         this.signal.update(state => ({ ...state, otp: { ...state.otp, verified: false, value: null } }));
     }
 
+    showRequestOtpView() {
+        this.username.reset();
+        this.signal.update(state => ({ ...state, requestedPasswordReset: false, completed: false, user: null, otp: { ...state.otp, verified: false, value: null } }));
+        this.timerSignal.update(() => ({ minutes: '00', seconds: '00' }));
+
+    }
+
     protected async requestOTP() {
         this.username.markAllAsTouched();
         this.username.markAsDirty();
@@ -125,7 +142,14 @@ export class PasswordForgot {
 
 
         const cachedLock = this.storage.getItem(`${this.username.value}_lock`);
-        let { lock: { tries, expiresAt }, requestedPasswordReset } = this.signal();
+        let { lock: { tries, expiresAt }, requestedPasswordReset, user } = this.signal();
+
+        // case user input value changes, we reset the trie and expiresAt conint the context
+        if (user !== this.username.value) {
+            tries = 0;
+            expiresAt = null;
+        }
+
         if (cachedLock) {
             const cachedLockValue = JSON.parse(cachedLock);
             if (cachedLockValue && typeof cachedLockValue === 'object' && 'tries' in cachedLockValue && 'expiresAt' in cachedLockValue) {
@@ -145,7 +169,7 @@ export class PasswordForgot {
 
             // case lock is enabled we simulate a navigation to otp view case user is not on the otp view
             if ((tries > this._maxtries) || (expiresAt && expiresAt.getTime() - new Date().getTime() > 0)) {
-                
+
                 if (!requestedPasswordReset) {
                     this.signal.update(state => ({ ...state, performingAction: true, user: state.user ?? this.username.value, lock: { ...state.lock, tries, expiresAt } }));
                     setTimeout(() => {
