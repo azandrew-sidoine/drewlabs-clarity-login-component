@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, Inject, Input, Optional as NgOptional, ViewChild, signal as createSignal, effect } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Inject, Input, Optional as NgOptional, OnDestroy, ViewChild, signal as createSignal, effect } from "@angular/core";
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UIMetadata } from "../type";
@@ -7,7 +7,7 @@ import { AUTH_METADATA } from "../providers";
 import { PasswordResetError, Optional, PASSWORD_RESET, PasswordResetProvider, SignalType } from "./types";
 import { COMMON_PIPES } from "@azlabsjs/ngx-common";
 import { OTPComponent } from "../otp";
-import { lastValueFrom, Subject } from "rxjs";
+import { lastValueFrom, Subject, Subscription } from "rxjs";
 import { DOCUMENT_LOCAL_STORAGE } from "@azlabsjs/ngx-storage";
 import { UI_EVENTS_CONTROLLER, UIEventsControllerType } from "../../../directives/ui-events";
 import { PasswordInputDirective } from "../login/password-input.directive";
@@ -21,7 +21,7 @@ import { PasswordToggleComponent } from "../login/password-toggle";
     styleUrls: ['./password-forgot.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PasswordForgot {
+export class PasswordForgot implements OnDestroy {
     private _logo: Optional<string>;
     @Input() set logo(value: string | undefined | null) {
         if (value) {
@@ -71,6 +71,7 @@ export class PasswordForgot {
     protected timerSignal = createSignal<{ minutes: string, seconds: string }>({ minutes: '00', seconds: '00' });
 
     private counter = new Subject<Date>();
+    private counterSubscription: Optional<Subscription>;
     private timerInterval: ReturnType<typeof setInterval> | undefined = undefined;
 
     constructor(
@@ -91,7 +92,7 @@ export class PasswordForgot {
         });
 
 
-        this.counter.subscribe(value => {
+        this.counterSubscription = this.counter.subscribe(value => {
             clearInterval(this.timerInterval);
             this.timerSignal.update(() => ({ minutes: '00', seconds: '00' }));
             if (value) {
@@ -110,6 +111,12 @@ export class PasswordForgot {
                 }, 1000);
             }
         });
+    }
+
+    ngOnDestroy() {
+        if (this.counterSubscription) {
+            this.counterSubscription.unsubscribe();
+        }
     }
 
     showOtpView() {
