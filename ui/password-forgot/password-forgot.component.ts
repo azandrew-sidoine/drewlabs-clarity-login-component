@@ -147,8 +147,8 @@ export class PasswordForgot implements OnDestroy {
             return;
         }
 
-
-        const cachedLock = this.storage.getItem(`${this.username.value}_lock`);
+        const keyName = `${this.username.value}_lock`;
+        const cachedLock = this.storage.getItem(keyName);
         let { lock: { tries, expiresAt }, requestedPasswordReset, user } = this.signal();
 
         // case user input value changes, we reset the trie and expiresAt conint the context
@@ -160,11 +160,22 @@ export class PasswordForgot implements OnDestroy {
         if (cachedLock) {
             const cachedLockValue = JSON.parse(cachedLock);
             if (cachedLockValue && typeof cachedLockValue === 'object' && 'tries' in cachedLockValue && 'expiresAt' in cachedLockValue) {
-                tries = cachedLockValue.tries as number;
-                expiresAt = cachedLockValue.expiresAt ? new Date(cachedLockValue.expiresAt) : null;
+                if (cachedLockValue.expiresAt) {
+                    const dt = new Date(cachedLockValue.expiresAt).getTime() - new Date().getTime();
+                    // case expiresAt is in the pass, we remove it from the local storage
+                    if (dt < 0) {
+                        this.storage.removeItem(keyName);
+                    } else {
+                        expiresAt = new Date(cachedLockValue.expiresAt);
+                        tries = cachedLockValue.tries as number;
+                    }
+                }
 
                 // when we load expiresAt from storage and it value is not null, we notify the counter
                 if (expiresAt) {
+                    if (this.timerInterval) {
+                        clearInterval(this.timerInterval);
+                    }
                     this.counter.next(expiresAt);
                 }
             }
@@ -194,6 +205,11 @@ export class PasswordForgot implements OnDestroy {
                     const currentdate = new Date();
                     currentdate.setHours(currentdate.getHours() + 1);
                     expiresAt = currentdate;
+
+                    if (this.timerInterval) {
+                        clearInterval(this.timerInterval);
+                    }
+
                     this.counter.next(expiresAt);
                 }
 
@@ -201,7 +217,7 @@ export class PasswordForgot implements OnDestroy {
                 const lock = { ...state.lock, expiresAt, tries: Math.min(tries, this._maxtries) };
 
                 // save the lock state into local storage in order to load it on the next otp request
-                this.storage.setItem(`${this.username.value}_lock`, JSON.stringify({ tries: lock.tries, expiresAt: lock.expiresAt ? lock.expiresAt.getTime() : null }));
+                this.storage.setItem(keyName, JSON.stringify({ tries: lock.tries, expiresAt: lock.expiresAt ? lock.expiresAt.getTime() : null }));
 
                 return { ...state, performingAction: true, user: this.username.value, lock };
             });
