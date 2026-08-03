@@ -20,7 +20,7 @@ import { deequal, rpad } from './utils';
 
 @Component({
   standalone: true,
-  selector: 'ngx-otp-input',
+  selector: 'ngx-auth-otp-input',
   imports: [CommonModule, FormsModule, OTPDirective, NewArrayPipe],
   templateUrl: './otp.component.html',
   styleUrls: ['./otp.component.scss'],
