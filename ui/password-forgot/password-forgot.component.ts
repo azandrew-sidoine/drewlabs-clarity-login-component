@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, Inject, Input, Optional as NgOptional, ViewChild, signal as createSignal, effect } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Inject, Input, Optional as NgOptional, OnDestroy, ViewChild, signal as createSignal, effect } from "@angular/core";
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UIMetadata } from "../type";
@@ -7,7 +7,7 @@ import { AUTH_METADATA } from "../providers";
 import { PasswordResetError, Optional, PASSWORD_RESET, PasswordResetProvider, SignalType } from "./types";
 import { COMMON_PIPES } from "@azlabsjs/ngx-common";
 import { OTPComponent } from "../otp";
-import { lastValueFrom, Subject } from "rxjs";
+import { lastValueFrom, Subject, Subscription } from "rxjs";
 import { DOCUMENT_LOCAL_STORAGE } from "@azlabsjs/ngx-storage";
 import { UI_EVENTS_CONTROLLER, UIEventsControllerType } from "../../../directives/ui-events";
 import { PasswordInputDirective } from "../login/password-input.directive";
@@ -21,7 +21,7 @@ import { PasswordToggleComponent } from "../login/password-toggle";
     styleUrls: ['./password-forgot.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PasswordForgot {
+export class PasswordForgot implements OnDestroy {
     private _logo: Optional<string>;
     @Input() set logo(value: string | undefined | null) {
         if (value) {
@@ -71,6 +71,7 @@ export class PasswordForgot {
     protected timerSignal = createSignal<{ minutes: string, seconds: string }>({ minutes: '00', seconds: '00' });
 
     private counter = new Subject<Date>();
+    private counterSubscription: Optional<Subscription>;
     private timerInterval: ReturnType<typeof setInterval> | undefined = undefined;
 
     constructor(
@@ -91,7 +92,7 @@ export class PasswordForgot {
         });
 
 
-        this.counter.subscribe(value => {
+        this.counterSubscription = this.counter.subscribe(value => {
             clearInterval(this.timerInterval);
             this.timerSignal.update(() => ({ minutes: '00', seconds: '00' }));
             if (value) {
@@ -110,6 +111,12 @@ export class PasswordForgot {
                 }, 1000);
             }
         });
+    }
+
+    ngOnDestroy() {
+        if (this.counterSubscription) {
+            this.counterSubscription.unsubscribe();
+        }
     }
 
     showOtpView() {
@@ -140,8 +147,8 @@ export class PasswordForgot {
             return;
         }
 
-
-        const cachedLock = this.storage.getItem(`${this.username.value}_lock`);
+        const keyName = `${this.username.value}_lock`;
+        const cachedLock = this.storage.getItem(keyName);
         let { lock: { tries, expiresAt }, requestedPasswordReset, user } = this.signal();
 
         // case user input value changes, we reset the trie and expiresAt conint the context
@@ -153,11 +160,22 @@ export class PasswordForgot {
         if (cachedLock) {
             const cachedLockValue = JSON.parse(cachedLock);
             if (cachedLockValue && typeof cachedLockValue === 'object' && 'tries' in cachedLockValue && 'expiresAt' in cachedLockValue) {
-                tries = cachedLockValue.tries as number;
-                expiresAt = cachedLockValue.expiresAt ? new Date(cachedLockValue.expiresAt) : null;
+                if (cachedLockValue.expiresAt) {
+                    const dt = new Date(cachedLockValue.expiresAt).getTime() - new Date().getTime();
+                    // case expiresAt is in the pass, we remove it from the local storage
+                    if (dt < 0) {
+                        this.storage.removeItem(keyName);
+                    } else {
+                        expiresAt = new Date(cachedLockValue.expiresAt);
+                        tries = cachedLockValue.tries as number;
+                    }
+                }
 
                 // when we load expiresAt from storage and it value is not null, we notify the counter
                 if (expiresAt) {
+                    if (this.timerInterval) {
+                        clearInterval(this.timerInterval);
+                    }
                     this.counter.next(expiresAt);
                 }
             }
@@ -187,6 +205,11 @@ export class PasswordForgot {
                     const currentdate = new Date();
                     currentdate.setHours(currentdate.getHours() + 1);
                     expiresAt = currentdate;
+
+                    if (this.timerInterval) {
+                        clearInterval(this.timerInterval);
+                    }
+
                     this.counter.next(expiresAt);
                 }
 
@@ -194,7 +217,7 @@ export class PasswordForgot {
                 const lock = { ...state.lock, expiresAt, tries: Math.min(tries, this._maxtries) };
 
                 // save the lock state into local storage in order to load it on the next otp request
-                this.storage.setItem(`${this.username.value}_lock`, JSON.stringify({ tries: lock.tries, expiresAt: lock.expiresAt ? lock.expiresAt.getTime() : null }));
+                this.storage.setItem(keyName, JSON.stringify({ tries: lock.tries, expiresAt: lock.expiresAt ? lock.expiresAt.getTime() : null }));
 
                 return { ...state, performingAction: true, user: this.username.value, lock };
             });
